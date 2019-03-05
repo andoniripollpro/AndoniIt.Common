@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F0734BC5-4BAA-4AC4-AE1A-723B405A6104}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MovistarPlus.Common</RootNamespace>
+    <AssemblyName>MovistarPlus.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Stage|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Stage\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="iBoxDB.NET2, Version=2.17.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\iBoxDB.2.17.3.2\lib\net20\iBoxDB.NET2.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\AssemblyExtension.cs" />
+    <Compile Include="Common\EncodingMapper.cs" />
+    <Compile Include="Common\ExceptionExtender.cs" />
+    <Compile Include="Common\GoodConfigOnBoxDb.cs" />
+    <Compile Include="Common\ProcessExtension.cs" />
+    <Compile Include="Common\XmlStringExtender.cs" />
+    <Compile Include="Dto\BoxConfigDto.cs" />
+    <Compile Include="Common\CmdCommand.cs" />
+    <Compile Include="Common\ConfigOnBoxDao.cs" />
+    <Compile Include="Common\DomainUserDto.cs" />
+    <Compile Include="Common\Encrypter.cs" />
+    <Compile Include="Common\EnumDecorator.cs" />
+    <Compile Include="Common\ExceptionDecorator.cs" />
+    <Compile Include="Common\GoodConfigOnFiles.cs" />
+    <Compile Include="Interface\IGoodConfig.cs" />
+    <Compile Include="Dto\StreamService.cs" />
+    <Compile Include="Dto\StringExtender.cs" />
+    <Compile Include="Common\WebApiClientHelper.cs" />
+    <Compile Include="Dto\CompleteSelection.cs" />
+    <Compile Include="Dto\ConfigBaseFolderDto.cs" />
+    <Compile Include="Dto\ConfigFileSelection.cs" />
+    <Compile Include="Dto\ConfigFileTypesRelation.cs" />
+    <Compile Include="Dto\ConfigTypeFile.cs" />
+    <Compile Include="Dto\DeploymentHistoryEvent.cs" />
+    <Compile Include="Dto\DeviceDto.cs" />
+    <Compile Include="Dto\DeviceGroup.cs" />
+    <Compile Include="Dto\DeviceGroupIncidenceState.cs" />
+    <Compile Include="Dto\DeviceSelection.cs" />
+    <Compile Include="Dto\Envelope.cs" />
+    <Compile Include="Dto\EnvironmentDestinationEnum.cs" />
+    <Compile Include="Dto\IncidenceOperationDto.cs" />
+    <Compile Include="Dto\ProfileDto.cs" />
+    <Compile Include="Dto\UserDto.cs" />
+    <Compile Include="Interface\IComunicate.cs" />
+    <Compile Include="Interface\IFileDestinationClientWrapper.cs" />
+    <Compile Include="Interface\IFileDestinationClientWrapperFactory.cs" />
+    <Compile Include="Interface\IFileHelper.cs" />
+    <Compile Include="Interface\IIncidenceOperationDao.cs" />
+    <Compile Include="Interface\IIncidenceService.cs" />
+    <Compile Include="Interface\IPublisherHistoricGateway.cs" />
+    <Compile Include="Interface\IPublisherService.cs" />
+    <Compile Include="Interface\IRefresherCdn.cs" />
+    <Compile Include="Interface\IUserDao.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

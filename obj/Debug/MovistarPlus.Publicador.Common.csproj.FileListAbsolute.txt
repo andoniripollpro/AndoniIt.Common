@@ -1,0 +1,10 @@
+C:\Users\ARipollJ\Documents\Visual Studio 2017\Projects\MovistarPlus.Publicador\MovistarPlus.Publicador.Common\bin\Debug\MovistarPlus.Publicador.Common.dll
+C:\Users\ARipollJ\Documents\Visual Studio 2017\Projects\MovistarPlus.Publicador\MovistarPlus.Publicador.Common\bin\Debug\MovistarPlus.Publicador.Common.pdb
+C:\Users\ARipollJ\Documents\Visual Studio 2017\Projects\MovistarPlus.Publicador\MovistarPlus.Publicador.Common\bin\Debug\iBoxDB.NET2.dll
+C:\Users\ARipollJ\Documents\Visual Studio 2017\Projects\MovistarPlus.Publicador\MovistarPlus.Publicador.Common\bin\Debug\Newtonsoft.Json.dll
+C:\Users\ARipollJ\Documents\Visual Studio 2017\Projects\MovistarPlus.Publicador\MovistarPlus.Publicador.Common\bin\Debug\Newtonsoft.Json.xml
+C:\Users\ARipollJ\Documents\Visual Studio 2017\Projects\MovistarPlus.Publicador\MovistarPlus.Publicador.Common\obj\Debug\MovistarPlus.Publicador.Common.csproj.CoreCompileInputs.cache
+C:\Users\ARipollJ\Documents\Visual Studio 2017\Projects\MovistarPlus.Publicador\MovistarPlus.Publicador.Common\obj\Debug\MovistarPlus.Publicador.Common.csproj.CopyComplete
+C:\Users\ARipollJ\Documents\Visual Studio 2017\Projects\MovistarPlus.Publicador\MovistarPlus.Publicador.Common\obj\Debug\MovistarPlus.Publicador.Common.dll
+C:\Users\ARipollJ\Documents\Visual Studio 2017\Projects\MovistarPlus.Publicador\MovistarPlus.Publicador.Common\obj\Debug\MovistarPlus.Publicador.Common.pdb
+C:\Users\ARipollJ\Documents\Visual Studio 2017\Projects\MovistarPlus.Publicador\MovistarPlus.Publicador.Common\obj\Debug\MovistarPlus.Publicador.Common.csprojAssemblyReference.cache

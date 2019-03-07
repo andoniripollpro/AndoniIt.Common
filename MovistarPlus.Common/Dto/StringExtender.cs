@@ -13,12 +13,12 @@ namespace MovistarPlus.Common.Dto
             this.stringDecorated = str;
         }
 
-        internal string FromPascalCaseToText()
+		public string FromPascalCaseToText()
         {
             return FromPascalCaseToText(this.stringDecorated);
         }
 
-        internal string FromPascalCaseToText(string processing)
+        public string FromPascalCaseToText(string processing)
         {
             for (int i = 1; i < processing.Length; i++)
             {

@@ -39,11 +39,20 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Dapper, Version=1.60.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\MovistarPlus.CodificacionSubida\packages\Dapper.1.60.1\lib\net451\Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="iBoxDB.NET2, Version=2.17.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\iBoxDB.2.17.3.2\lib\net20\iBoxDB.NET2.dll</HintPath>
+      <HintPath>..\MovistarPlus.CodificacionSubida\packages\iBoxDB.2.17.3.2\lib\net20\iBoxDB.NET2.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\MovistarPlus.CodificacionSubida\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\MovistarPlus.CodificacionSubida\packages\NLog.4.5.10\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.18.3, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\MovistarPlus.CodificacionSubida\packages\Oracle.ManagedDataAccess.18.3.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -65,6 +74,10 @@
     <Compile Include="Common\EncodingMapper.cs" />
     <Compile Include="Common\ExceptionExtender.cs" />
     <Compile Include="Common\GoodConfigOnBoxDb.cs" />
+    <Compile Include="Common\GoodConfigOnDao.cs" />
+    <Compile Include="Common\IoCObjectContainer.cs" />
+    <Compile Include="Common\NLogWrapper.cs" />
+    <Compile Include="Common\OracleConnectionExtension.cs" />
     <Compile Include="Common\ProcessExtension.cs" />
     <Compile Include="Common\XmlStringExtender.cs" />
     <Compile Include="Dto\BoxConfigDto.cs" />
@@ -75,6 +88,7 @@
     <Compile Include="Common\EnumDecorator.cs" />
     <Compile Include="Common\ExceptionDecorator.cs" />
     <Compile Include="Common\GoodConfigOnFiles.cs" />
+    <Compile Include="iBoxDB2173.cs" />
     <Compile Include="Interface\IGoodConfig.cs" />
     <Compile Include="Dto\StreamService.cs" />
     <Compile Include="Dto\StringExtender.cs" />
@@ -100,6 +114,8 @@
     <Compile Include="Interface\IFileHelper.cs" />
     <Compile Include="Interface\IIncidenceOperationDao.cs" />
     <Compile Include="Interface\IIncidenceService.cs" />
+    <Compile Include="Interface\IIoCObjectContainer.cs" />
+    <Compile Include="Interface\ILog.cs" />
     <Compile Include="Interface\IPublisherHistoricGateway.cs" />
     <Compile Include="Interface\IPublisherService.cs" />
     <Compile Include="Interface\IRefresherCdn.cs" />
@@ -107,6 +123,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

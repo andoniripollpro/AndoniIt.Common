@@ -10,7 +10,7 @@ namespace MovistarPlus.Common
 		{
 			var filePath = assembly.Location;
 			const int c_PeHeaderOffset = 60;
-			const int c_LinkerTimestampOffset = 8; 
+			const int c_LinkerTimestampOffset = 8;
 
 			var buffer = new byte[2048];
 

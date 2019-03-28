@@ -45,6 +45,9 @@
     <Reference Include="iBoxDB.NET2, Version=2.17.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\iBoxDB.2.17.3\lib\net20\iBoxDB.NET2.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -76,7 +79,9 @@
     <Compile Include="Common\ExceptionExtender.cs" />
     <Compile Include="Common\GoodConfigOnBoxDb.cs" />
     <Compile Include="Common\GoodConfigOnDao.cs" />
+    <Compile Include="Common\Insister.cs" />
     <Compile Include="Common\IoCObjectContainer.cs" />
+    <Compile Include="Common\Log4NetWrapper.cs" />
     <Compile Include="Common\NLogWrapper.cs" />
     <Compile Include="Common\OracleConnectionExtension.cs" />
     <Compile Include="Common\ProcessExtension.cs" />

@@ -75,7 +75,7 @@ namespace MovistarPlus.Common
                 if (field.Name == description)
                     return (T)field.GetValue(null);
             }
-            throw new ArgumentException("Not found.", "description");
+            throw new ArgumentException($"Not found enum for value {description}", "description");
             // or return default(T);
         }
     }

@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Integration\GoodConfigOnDaoTest.cs" />
+    <Compile Include="Common\Unit\InsisterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestsHelper.cs" />
   </ItemGroup>

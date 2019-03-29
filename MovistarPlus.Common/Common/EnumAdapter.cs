@@ -8,7 +8,7 @@ using System.Reflection;
 /// </remarks>
 namespace MovistarPlus.Common
 {
-    public class EnumDecorator<T> where T : struct
+    public class EnumAdapter<T> where T : struct
     {
         private T value;
         public T Value
@@ -16,11 +16,11 @@ namespace MovistarPlus.Common
             get { return this.value; }
         }
 
-        public EnumDecorator(T decoratedEnum)
+        public EnumAdapter(T decoratedEnum)
         {
             this.value = decoratedEnum;
         }
-        public EnumDecorator(string description)
+        public EnumAdapter(string description)
         {
             this.value = this.GetValueFromDescription(description);
         }

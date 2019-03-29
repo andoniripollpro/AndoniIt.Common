@@ -45,8 +45,8 @@
     <Reference Include="iBoxDB.NET2, Version=2.17.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\iBoxDB.2.17.3\lib\net20\iBoxDB.NET2.dll</HintPath>
     </Reference>
-    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=2.0.7.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.7\lib\net45-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -91,8 +91,8 @@
     <Compile Include="Common\ConfigOnBoxDao.cs" />
     <Compile Include="Common\DomainUserDto.cs" />
     <Compile Include="Common\Encrypter.cs" />
-    <Compile Include="Common\EnumDecorator.cs" />
-    <Compile Include="Common\ExceptionDecorator.cs" />
+    <Compile Include="Common\EnumAdapter.cs" />
+    <Compile Include="Common\ExceptionAdapter.cs" />
     <Compile Include="Common\GoodConfigOnFiles.cs" />
     <Compile Include="iBoxDB2173.cs" />
     <Compile Include="Interface\IGoodConfig.cs" />
@@ -108,7 +108,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

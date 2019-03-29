@@ -3,10 +3,10 @@ using System.Text;
 
 namespace MovistarPlus.Common
 {
-	public class ExceptionDecorator
-    {
+	public class ExceptionAdapter
+	{
         private Exception exceptionDecorated;
-        public ExceptionDecorator(Exception ex)
+        public ExceptionAdapter(Exception ex)
         {
             this.exceptionDecorated = ex ?? throw new ArgumentNullException("ex");
         }
@@ -20,7 +20,7 @@ namespace MovistarPlus.Common
                 if (this.exceptionDecorated.InnerException == null)
                     return strBuild.ToString();
                 else
-                    return strBuild.AppendLine(new ExceptionDecorator(this.exceptionDecorated.InnerException).MessageAndInnerMessages).ToString();
+                    return strBuild.AppendLine(new ExceptionAdapter(this.exceptionDecorated.InnerException).MessageAndInnerMessages).ToString();
             }
         }
    }

@@ -8,35 +8,41 @@ using System.Text;
 
 namespace MovistarPlus.Common
 {
-	public class WebApiClientHelper
+	public class HttpClientAdapter
     {
-		public delegate void Log(string message);
-		public event Log LogEvent;
+		public delegate void Log(string message);		
 
-		private readonly WebApiClientHelper.ILog logListener;
+		private readonly HttpClientAdapter.ILog logListener;
 
-		public WebApiClientHelper(WebApiClientHelper.ILog logListener = null)
+		public HttpClientAdapter(HttpClientAdapter.ILog logListener = null)
 		{
 			this.logListener = logListener;
 		}
 
 		public T AllCookedUpPost<T>(string url, object body, NetworkCredential credentials = null)
         {
+			return JsonConvert.DeserializeObject<T>(AllCookedUpPost(url, JsonConvert.SerializeObject(body), credentials));
+		}
+		public string AllCookedUpPost(string url, object body, NetworkCredential credentials = null)
+		{
+			return AllCookedUpPost(url, JsonConvert.SerializeObject(body), credentials);
+		}
+		public string AllCookedUpPost(string url, string body, NetworkCredential credentials = null)
+		{
 			this.logListener?.Message($"Antes del POST {url}. Credentials: {credentials.UserName} Body: {body}");
 
 			using (var webApiClient = this.GetDisposableHttpClient(url, credentials))
-            {
-                StringContent content = new StringContent(JsonConvert.SerializeObject(body));
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var responseMessage = webApiClient.PostAsync(string.Empty, content).Result;
+			{
+				StringContent content = new StringContent(body);
+				content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+				var responseMessage = webApiClient.PostAsync(string.Empty, content).Result;
 				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
 				if (!responseMessage.IsSuccessStatusCode)
-                    throw new Exception(responseMessage.ReasonPhrase.ToString());
-
-                return JsonConvert.DeserializeObject<T>(responseMessage.Content.ReadAsStringAsync().Result); 
-            }
-        }
-        private HttpClient GetDisposableHttpClient(string url, NetworkCredential credentials = null)
+					throw new Exception(responseMessage.ReasonPhrase.ToString());
+				return responseMessage.Content.ReadAsStringAsync().Result;
+			}
+		}
+		private HttpClient GetDisposableHttpClient(string url, NetworkCredential credentials = null)
         {
             HttpClientHandler handler;
             if (credentials == null)
@@ -71,13 +77,34 @@ namespace MovistarPlus.Common
 			this.logListener?.Message($"Antes del DELETE {url}. Credentials: {credentials.UserName}. Deleted file: {urn}");
 			string response = "ERROR";
 
-			using (var wepApiClient = this.GetDisposableHttpClient(url, credentials))
+			using (var webApiClient = this.GetDisposableHttpClient(url, credentials))
 			{
-				var responseMessage = wepApiClient.DeleteAsync(urn).Result;
+				var responseMessage = webApiClient.DeleteAsync(urn).Result;
 				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
 				response = responseMessage.Content.ReadAsStringAsync().Result;
 			}
 			return response;
+		}
+
+		public void AllCookedUpPatch(string url, string body, NetworkCredential credentials = null)
+		{
+			this.logListener?.Message($"Antes del PATCH {url}. Credentials: {credentials.UserName}. Body: {body}");
+
+			HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+			httpWebRequest.ContentType = "application/json";
+			httpWebRequest.Method = "PATCH";
+			httpWebRequest.KeepAlive = true;
+			httpWebRequest.Credentials = credentials ?? CredentialCache.DefaultCredentials;
+
+			var bytes = Encoding.UTF8.GetBytes(body);
+			httpWebRequest.GetRequestStream().Write(bytes, 0, bytes.Length);
+
+			using (WebResponse wresp = httpWebRequest.GetResponse())
+			{
+				this.logListener?.Message($"Response.StatusCode = {(int)((HttpWebResponse)wresp).StatusCode}");				
+			};
+
+			httpWebRequest = null;
 		}
 
 		private void SetCredentials(HttpClient wepApiClient, NetworkCredential credentials)
@@ -172,7 +199,7 @@ namespace MovistarPlus.Common
                 var responseMessage = wepApiClient.GetAsync(string.Empty).Result;
 				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
 				if (!responseMessage.IsSuccessStatusCode)
-                    throw new Exception(string.Format("WebApiClientHelper.AllCookedUpGet {0}", responseMessage.ReasonPhrase.ToString()));
+                    throw new Exception(string.Format("HttpClientAdapter.AllCookedUpGet {0}", responseMessage.ReasonPhrase.ToString()));
                 response = responseMessage.Content.ReadAsStringAsync().Result;
 			}
             return response;

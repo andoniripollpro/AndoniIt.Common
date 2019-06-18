@@ -86,7 +86,7 @@ namespace MovistarPlus.Common
 					};
 				}
 				string configFileName = this.configFileName == null ? $"{Path.GetFileName(callingAssembly.Location)}.config" : this.configFileName;
-				configFileContent = new WebApiClientHelper().AllCookedUpGet($"{this.connecData.Url}/{configFileName}", credentials);				
+				configFileContent = new HttpClientAdapter().AllCookedUpGet($"{this.connecData.Url}/{configFileName}", credentials);				
 			}
 			var reader = XmlReader.Create(new StringReader(configFileContent), new XmlReaderSettings() { IgnoreComments = true });			
 			doc.Load(reader);
@@ -95,7 +95,7 @@ namespace MovistarPlus.Common
 
 		private XmlNode GetNodeFromAddress(XmlNode node, string tagAddress)
 		{
-			return GetNodeFromAddress(node, tagAddress.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries).ToList());			
+			return GetNodeFromAddress(node, tagAddress.Split(new char[] {'.'}, StringSplitOptions.RemoveEmptyEntries).ToList());			
 		}
 
 		private XmlNode GetNodeFromAddress(XmlNode node, List<string> tagAddress)

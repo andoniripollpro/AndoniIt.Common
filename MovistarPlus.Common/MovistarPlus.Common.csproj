@@ -38,26 +38,36 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>AssemblySignature.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Dapper, Version=1.60.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Dapper.1.60.6\lib\net451\Dapper.dll</HintPath>
+      <HintPath>..\..\MovistarPlus.CodificacionSubida\packages\Dapper.1.60.6\lib\net451\Dapper.dll</HintPath>
     </Reference>
     <Reference Include="iBoxDB.NET2, Version=2.17.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\iBoxDB.2.17.3.2\lib\net20\iBoxDB.NET2.dll</HintPath>
+      <HintPath>..\..\MovistarPlus.CodificacionSubida\packages\iBoxDB.2.17.3.2\lib\net20\iBoxDB.NET2.dll</HintPath>
     </Reference>
-    <Reference Include="log4net, Version=2.0.7.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\log4net.2.0.7\lib\net45-full\log4net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\MovistarPlus.CodificacionSubida\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.Diagnostics.Tracing.EventSource, Version=1.1.28.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\MovistarPlus.CodificacionSubida\packages\Microsoft.Diagnostics.Tracing.EventSource.Redist.1.1.28\lib\net40\Microsoft.Diagnostics.Tracing.EventSource.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\MovistarPlus.DaypartSaver\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NLog.4.6.1\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\..\MovistarPlus.CodificacionSubida\packages\NLog.4.6.0\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="Oracle.ManagedDataAccess, Version=4.121.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Oracle.ManagedDataAccess.12.1.24160419\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
+      <HintPath>..\..\MovistarPlus.CodificacionSubida\packages\Oracle.ManagedDataAccess.12.1.24160719\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="RabbitMQ.Client, Version=5.0.0.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
+      <HintPath>..\..\MovistarPlus.CodificacionSubida\packages\RabbitMQ.Client.5.1.0\lib\net451\RabbitMQ.Client.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -76,8 +86,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AssemblyExtension.cs" />
+    <Compile Include="Common\CachedValue.cs" />
     <Compile Include="Common\EncodingMapper.cs" />
     <Compile Include="Common\ExceptionExtender.cs" />
+    <Compile Include="Common\GenericExtensions.cs" />
     <Compile Include="Common\GoodConfigOnBoxDb.cs" />
     <Compile Include="Common\GoodConfigOnDao.cs" />
     <Compile Include="Common\Insister.cs" />
@@ -86,6 +98,11 @@
     <Compile Include="Common\NLogWrapper.cs" />
     <Compile Include="Common\OracleConnectionExtension.cs" />
     <Compile Include="Common\ProcessExtension.cs" />
+    <Compile Include="Common\RabbitMQConsumer.cs" />
+    <Compile Include="Common\RabbitMQPublisher.cs" />
+    <Compile Include="Common\StackTraceExtender.cs" />
+    <Compile Include="Common\StringDecorator.cs" />
+    <Compile Include="Common\VersionExtender.cs" />
     <Compile Include="Common\XmlStringExtender.cs" />
     <Compile Include="Dto\BoxConfigDto.cs" />
     <Compile Include="Common\CmdCommand.cs" />
@@ -95,11 +112,10 @@
     <Compile Include="Common\EnumAdapter.cs" />
     <Compile Include="Common\ExceptionAdapter.cs" />
     <Compile Include="Common\GoodConfigOnFiles.cs" />
-    <Compile Include="iBoxDB2173.cs" />
     <Compile Include="Interface\IGoodConfig.cs" />
     <Compile Include="Dto\StreamService.cs" />
     <Compile Include="Dto\StringExtender.cs" />
-    <Compile Include="Common\WebApiClientHelper.cs" />
+    <Compile Include="Common\HttpClientAdapter.cs" />
     <Compile Include="Dto\Envelope.cs" />
     <Compile Include="Interface\IComunicate.cs" />
     <Compile Include="Interface\IFileHelper.cs" />
@@ -109,9 +125,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="AssemblySignature.snk" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Leeme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

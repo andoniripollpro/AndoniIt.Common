@@ -13,21 +13,28 @@ namespace MovistarPlus.Common
 {
 	public class GoodConfigOnDao : IGoodConfig
 	{
+		private readonly IIoCObjectContainer ioCObjectContainer;
 		private readonly string connectionString;
 		private readonly string appId;
+		private readonly int secondsToRefreshConfig;
 		private readonly ILog log;
-		private readonly string configurationInJson;
+		private string configurationInJson;
+		private DateTime dataBaseLastRead;
 
-		public GoodConfigOnDao(string connectionString, string appId)
+		public GoodConfigOnDao(IIoCObjectContainer ioCObjectContainer, string connectionString, string appId, int secondsToRefreshConfig = 0)
 		{
+			this.ioCObjectContainer = ioCObjectContainer ?? throw new ArgumentNullException("ioCObjectContainer");
 			if (string.IsNullOrWhiteSpace(connectionString))
 				throw new ArgumentNullException("connectionString");
 			this.connectionString = connectionString;
 			if (string.IsNullOrWhiteSpace(appId))
 				throw new ArgumentNullException("appId");
-			this.appId = appId;
-			this.log = IoCObjectContainer.Singleton.Get<ILog>();
-			this.configurationInJson = GetRootJStringFromDB();
+			this.appId = appId ?? throw new ArgumentNullException("appId");
+			this.secondsToRefreshConfig = secondsToRefreshConfig;
+			this.log = this.ioCObjectContainer.Get<ILog>();
+			this.configurationInJson = new Insister(this.log).Insist<string>(() => GetRootJStringFromDB() , 2);
+			this.dataBaseLastRead = DateTime.Now;
+			this.log.Debug($"Ended: connectionString: {this.connectionString}", new System.Diagnostics.StackTrace());
 		}
 
 		public ILog Log => log;
@@ -37,11 +44,30 @@ namespace MovistarPlus.Common
 			throw new NotImplementedException();
 		}
 
-		public JToken GetJNodeByTagAddress(string tagAddress)
+		public JToken GetJNodeByTagAddress(string tagAddress = null)
 		{
 			string json = GetRootJString();
-			JToken jToken = JToken.Parse(json);
-			return jToken[tagAddress];
+			JToken jTokenParsed = JToken.Parse(json);
+			JToken jTokenResult = GetJNodeByTagAddressOnJNode(jTokenParsed, tagAddress);
+			return jTokenResult ?? throw new ConfigurationErrorsException($"El tagAddress '{tagAddress}' me da nulo en la configuración");
+		}
+
+		public JToken GetJNodeByTagAddressOnJNode(JToken jToken, string tagAddress)
+		{
+			if (tagAddress != null)
+			{
+				if (!tagAddress.Contains("."))
+					return jToken[tagAddress];
+				else
+				{
+					int indexOfDot = tagAddress.IndexOf('.');
+					string prefix = tagAddress.Substring(0, indexOfDot);
+					string sufix = tagAddress.Substring(indexOfDot + 1, tagAddress.Length - indexOfDot - 1);
+					return GetJNodeByTagAddressOnJNode(jToken[prefix], sufix);
+				}
+			}
+			else
+				return jToken;
 		}
 
 		public XmlNode GetXmlNodeByTagAddress(string tagAddress)
@@ -52,7 +78,14 @@ namespace MovistarPlus.Common
 		}
 		private string GetRootJString()
 		{
-			return configurationInJson;
+			//	Refresh config each this.secondsToRefreshConfig OR each hour by default 
+			if ((this.secondsToRefreshConfig != 0 && DateTime.Now >= this.dataBaseLastRead.AddSeconds(this.secondsToRefreshConfig))
+				|| (this.secondsToRefreshConfig == 0 && DateTime.Now >= this.dataBaseLastRead.AddHours(1)))
+			{
+				this.configurationInJson = new Insister(this.log).Insist<string>(() => GetRootJStringFromDB(), 2);
+				this.dataBaseLastRead = DateTime.Now;
+			}
+			return this.configurationInJson;
 		}
 		private const string SELECT_CONFIG = "Select CONFIGURACION from VOD_APP_CONFIG " +
 			"where APP_ID = '{appId}' " +
@@ -73,7 +106,7 @@ namespace MovistarPlus.Common
 			{
 				string configurationInJson = configurationList[0].CONFIGURACION.ToString();
 				if (configurationList.Count() > 1) this.log.Error($"Existen {configurationList.Count()} registros de configuración en la base de datos para este sistema y rango de fechas, y se espera sólo 1");
-				this.log.Info($"Esta es la configuración leída de la BD: {Environment.NewLine}{configurationInJson}");
+				//this.log.Info($"Esta es la configuración leída de la BD: {Environment.NewLine}{configurationInJson}");
 				return configurationInJson;
 			}
 		}

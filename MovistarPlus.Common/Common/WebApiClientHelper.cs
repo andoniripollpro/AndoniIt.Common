@@ -14,10 +14,12 @@ namespace MovistarPlus.Common
 		public event Log LogEvent;
 
 		private readonly WebApiClientHelper.ILog logListener;
+		private readonly int? timeoutSeconds = null;
 
-		public WebApiClientHelper(WebApiClientHelper.ILog logListener = null)
+		public WebApiClientHelper(WebApiClientHelper.ILog logListener = null, int? timeoutSeconds = null )
 		{
 			this.logListener = logListener;
+			this.timeoutSeconds = timeoutSeconds;
 		}
 
 		public T AllCookedUpPost<T>(string url, object body, NetworkCredential credentials = null)
@@ -47,9 +49,9 @@ namespace MovistarPlus.Common
                 handler.PreAuthenticate = true;
                 handler.Proxy = WebRequest.DefaultWebProxy;
                 handler.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
-            }
-			
-            HttpClient client = new HttpClient(handler)
+            }			
+
+			HttpClient client = new HttpClient(handler)
             {
                 BaseAddress = new Uri(url)				
 			};
@@ -61,6 +63,12 @@ namespace MovistarPlus.Common
 				byte[] bytes = Encoding.UTF8.GetBytes(usuPassString);
 				string oauthToken = Convert.ToBase64String(bytes);
 				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", oauthToken);
+			}
+
+			if (this.timeoutSeconds.HasValue)
+			{
+				client.Timeout = new TimeSpan (0, 0, this.timeoutSeconds.Value);
+				this.logListener?.Message($"Timeout establecido a {this.timeoutSeconds.Value} segundos");
 			}
 
 			return client;

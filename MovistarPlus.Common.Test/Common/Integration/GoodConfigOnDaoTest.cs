@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MovistarPlus.Common.Interface;
 
@@ -17,9 +16,10 @@ namespace MovistarPlus.Common.Test.Common.Integration
 
 		[TestMethod]
 		public void GetJNodeByTagAddress_Normal_StringGiven()
-		{			
+		{
 			//	Arrange
-			GoodConfigOnDao toTest = new GoodConfigOnDao(CONNECTIONSTRING, "SoloParaTest");
+			Mock<IIoCObjectContainer> inizializeIoCObjectContainer = new TestsHelper().InizializeIoCObjectContainer();
+			GoodConfigOnDao toTest = new GoodConfigOnDao(inizializeIoCObjectContainer.Object, CONNECTIONSTRING, "SoloParaTest");
 
 			//	Act
 
@@ -30,7 +30,8 @@ namespace MovistarPlus.Common.Test.Common.Integration
 		public void GetJNodeByTagAddress_Normal_ComplexObjectGiven()
 		{
 			//	Arrange
-			GoodConfigOnDao toTest = new GoodConfigOnDao(CONNECTIONSTRING, "SoloParaTest");
+			Mock<IIoCObjectContainer> inizializeIoCObjectContainer = new TestsHelper().InizializeIoCObjectContainer();
+			GoodConfigOnDao toTest = new GoodConfigOnDao(inizializeIoCObjectContainer.Object, CONNECTIONSTRING, "SoloParaTest");
 
 			//	Act
 

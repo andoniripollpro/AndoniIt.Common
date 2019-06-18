@@ -64,7 +64,7 @@ namespace MovistarPlus.Common
 
         }
 
-        static byte[] Convert2ByteArray(string strInput)
+        byte[] Convert2ByteArray(string strInput)
         {
             int intCounter; char[] arrChar;
             arrChar = strInput.ToCharArray();

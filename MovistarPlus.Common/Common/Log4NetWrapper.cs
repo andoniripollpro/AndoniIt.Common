@@ -33,15 +33,15 @@ namespace MovistarPlus.Common
 			if (stackTrace != null) message = $"{StackTraceToString(stackTrace)}: {message}{Environment.NewLine}{stackTrace.ToString()}";
 			this.wrappedLog.Warn(message, exception);
 		}		
-		public void Info(string message, Exception exception = null, StackTrace stackTrace = null)
+		public void Info(string message, StackTrace stackTrace = null)
 		{
-			if (stackTrace != null) message = $"{StackTraceToString(stackTrace)}: {message}{Environment.NewLine}";
-			this.wrappedLog.Info(message, exception);			
+			if (stackTrace != null) message = $"{StackTraceToString(stackTrace)}: {message}";
+			this.wrappedLog.Info(message);			
 		}				
-		public void Debug(string message, Exception exception = null, StackTrace stackTrace = null)
+		public void Debug(string message, StackTrace stackTrace = null)
 		{
-			if (stackTrace != null) message = $"{StackTraceToString(stackTrace)}: {message}{Environment.NewLine}{stackTrace.ToString()}";
-			this.wrappedLog.Debug(message, exception);
+			if (stackTrace != null) message = $"{StackTraceToString(stackTrace)}: {message}";
+			this.wrappedLog.Debug(message);
 		}
 		private string StackTraceToString(StackTrace stackTrace)
 		{

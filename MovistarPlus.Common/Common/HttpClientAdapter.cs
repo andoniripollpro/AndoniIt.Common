@@ -12,10 +12,10 @@ namespace MovistarPlus.Common
     {
 		public delegate void Log(string message);		
 
-		private readonly WebApiClientHelper.ILog logListener;
+		private readonly HttpClientAdapter.ILog logListener;
 		private readonly int? timeoutSeconds = null;
 
-		public HttpClientAdapter(WebApiClientHelper.ILog logListener = null, int? timeoutSeconds = null)
+		public HttpClientAdapter(HttpClientAdapter.ILog logListener = null, int? timeoutSeconds = null)
 		{
 			this.logListener = logListener;
 			this.timeoutSeconds = timeoutSeconds;

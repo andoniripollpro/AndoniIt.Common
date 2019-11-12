@@ -50,7 +50,7 @@ namespace MovistarPlus.Common
 
 			this.serviceInstaller = new ServiceInstaller()
 			{
-				StartType = ServiceStartMode.Automatic,
+				StartType = ServiceStartMode.Manual,
 				Description = GetServiceNameAppConfig("ServiceDescription"),
 				ServiceName = GetServiceNameAppConfig("ServiceName"),
 				DisplayName = GetServiceNameAppConfig("ServiceName")

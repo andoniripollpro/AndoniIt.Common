@@ -36,8 +36,8 @@ namespace MovistarPlus.Common
 				processStart.Password = this.user.SecurePassword;
 			}
 			processStart.WindowStyle = ProcessWindowStyle.Hidden;
-			processStart.FileName = command; // string.Format("{0}\\CmdCommand.bat", this.cmdCommandLocation);
-			processStart.Arguments = arguments;// string.Format("\"{0}\" {1} {2}",this.workingDirectory, command, arguments);
+			processStart.FileName = command; // $"{this.cmdCommandLocation}\\CmdCommand.bat";
+			processStart.Arguments = arguments;// $"\"{this.workingDirectory}\" {command} {arguments}";
 			processStart.StandardOutputEncoding = Encoding.UTF8;
 			processStart.StandardErrorEncoding = Encoding.UTF8;
 			processStart.WorkingDirectory = this.cmdCommandLocation;
@@ -54,10 +54,10 @@ namespace MovistarPlus.Common
 
 				process.WaitForExit();
 
-				var resultStringBuilder = new StringBuilder(output);
+				var resultStringBuilder = output;
 				if (!string.IsNullOrWhiteSpace(error))
-					resultStringBuilder = resultStringBuilder.AppendLine("ERROR: ").Append(error);
-				return resultStringBuilder.ToString();
+					resultStringBuilder += $"ERROR: {error}";
+				return resultStringBuilder;
 			}
         }
 
@@ -77,10 +77,10 @@ namespace MovistarPlus.Common
 								
 			process.WaitForExit();
 
-			var resultStringBuilder = new StringBuilder(output);
+			var resultStringBuilder = output;
 			if (!string.IsNullOrWhiteSpace(error))
-				resultStringBuilder = resultStringBuilder.AppendLine("ERROR: ").Append(error);
-			return resultStringBuilder.ToString();
+				resultStringBuilder += $"ERROR: {error}";
+			return resultStringBuilder;
 		}
 
         private ProcessStartInfo GetProcessStartInfo()

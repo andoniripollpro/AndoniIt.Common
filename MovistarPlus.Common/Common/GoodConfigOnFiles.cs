@@ -65,9 +65,9 @@ namespace MovistarPlus.Common
 					}
 					else
 					{
-						string configFileName = string.Format("{0}.config", Path.GetFileName(callingAssembly.Location));
+						string configFileName = $"{Path.GetFileName(callingAssembly.Location)}.config";
 						if (Process.GetCurrentProcess().IsAsp())
-							configFileName = System.Web.HttpContext.Current.Server.MapPath(string.Format("~/bin/{0}", configFileName));
+							configFileName = System.Web.HttpContext.Current.Server.MapPath($"~/bin/{configFileName}");
 						configFileContent = File.ReadAllText(configFileName);
 					}
 				}

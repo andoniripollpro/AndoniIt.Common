@@ -9,9 +9,9 @@ namespace MovistarPlus.Common
 		{
 			StringBuilder strBuilder = new StringBuilder("(");
 			if (withSimpleQuotation)
-				list.ForEach(x => strBuilder.Append("'").Append(x.Trim()).Append("',"));
+				list.ForEach(x => strBuilder.Append("'").Append(x?.Trim()).Append("',"));
 			else
-				list.ForEach(x => strBuilder.Append(x.Trim()).Append(","));
+				list.ForEach(x => strBuilder.Append(x?.Trim()).Append(","));
 			if (strBuilder.Length > 1)
 				strBuilder.Remove(strBuilder.Length - 1, 1);
 			strBuilder.Append(")");

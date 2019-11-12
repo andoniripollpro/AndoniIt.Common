@@ -5,13 +5,15 @@ using RabbitMQ.Client.Events;
 using System;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 using System.Web;
 
 namespace MovistarPlus.Common.Common
 {
-	public class RabbitMQConsumer : IDisposable
+	public class RabbitMQConsumer : IDisposable, IRabbitMQConsumer
 	{
 		public event EventHandler<string> MessageArrived;
+		public event EventHandler<string> ErrorFatalEvent;
 
 		private readonly ILog log;
 		private readonly ConnectionFactory connectionFactory;
@@ -24,15 +26,14 @@ namespace MovistarPlus.Common.Common
 		//public RabbitMQConsumer(ConnectionFactory connectionFactory, ILog log, string amqpUrlListen)
 		public RabbitMQConsumer(ILog log, string amqpUrlListen)
 		{
-			this.log = log ?? throw new ArgumentNullException("log");
-			//this.connectionFactory = connectionFactory ?? throw new ArgumentNullException("connectionFactory");
+			this.log = log ?? throw new ArgumentNullException("log");			
 			this.connectionFactory = new ConnectionFactory();
 			this.amqpUrlListen = amqpUrlListen ?? throw new ArgumentNullException("amqpUrlListen");
 		}
 
 		public void Listen()
 		{
-			this.log.Info($"{new StackTrace().ToStringClassMethod()}: Listening on completeUri '{this.amqpUrlListen}'");
+			this.log.Info($"Listening on completeUri '{this.amqpUrlListen}'", new StackTrace());
 
 			try
 			{				
@@ -41,7 +42,12 @@ namespace MovistarPlus.Common.Common
 				string queue = HttpUtility.ParseQueryString(uri.Query).Get("queue");
 
 				this.connection = this.connectionFactory.CreateConnection();
+				this.connection.ConnectionShutdown += (obj, msg) => ConnectionShutdown(obj, msg);
+				this.connection.ConnectionBlocked += (obj, msg) => ConnectionBlocked(obj, msg);
+
 				this.channel = this.connection.CreateModel();
+				this.channel.ModelShutdown += (obj, msg) => ModelShutdown(obj, msg);
+
 				channel.QueueDeclare(queue: queue,
 						 durable: true,
 						 exclusive: false,
@@ -49,29 +55,17 @@ namespace MovistarPlus.Common.Common
 						 arguments: null);
 
 				var consumer = new EventingBasicConsumer(channel);
-				consumer.Received += (model, ea) =>
-				{
-					ConsumeMessage(ea);
-				};
-				consumer.ConsumerCancelled += (obj, msg) =>
-				{
-					ConsumerCancelled(obj, msg);
-				};
-				consumer.Shutdown += (obj, msg) =>
-				{
-					ConsumerShutdown(obj, msg);
-				};
-				consumer.Unregistered += (obj, msg) =>
-				{
-					ConsumerUnregistered(obj, msg);
-				};
+				consumer.Received += (model, ea) => { ConsumeMessage(ea); };
+				consumer.ConsumerCancelled += (obj, msg) => { ConsumerCancelled(obj, msg); };
+				consumer.Shutdown += (obj, msg) => { ConsumerShutdown(obj, msg); };
+				consumer.Unregistered += (obj, msg) => { ConsumerUnregistered(obj, msg); };
 				channel.BasicConsume(queue: queue,
-										autoAck: true,
+										autoAck: false,
 										consumer: consumer);
 			}
 			catch (Exception e)
 			{
-				this.log.Fatal($"{new StackTrace().ToStringClassMethod()}: No es capaz de escuchar los mensajes de la cola RabbitMQ", e);
+				this.log.Fatal($"No es capaz de escuchar los mensajes de la cola RabbitMQ", e, new StackTrace());
 				throw;
 			}
 		}
@@ -86,9 +80,11 @@ namespace MovistarPlus.Common.Common
 				correlationId = ea.BasicProperties.CorrelationId;
 				message = Encoding.UTF8.GetString(body);
 
-				MessageArrived?.Invoke(this, message);
+				this.MessageArrived?.Invoke(this, message);
 
-				this.log.Debug($"Received message '{message}', correlationId {correlationId}. Rabbit queue: {this.amqpUrlListen}");
+				this.channel.BasicAck(ea.DeliveryTag, false);
+
+				this.log.Debug($"Received message '{message}', correlationId {correlationId}. Rabbit queue: {this.amqpUrlListen}", new StackTrace());
 			}
 			catch (Exception e)
 			{
@@ -96,45 +92,92 @@ namespace MovistarPlus.Common.Common
 			}
 		}
 
+		private void ModelShutdown(object obj, ShutdownEventArgs msg)
+		{
+			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
+		}
+
+		private void ConnectionBlocked(object obj, ConnectionBlockedEventArgs msg)
+		{
+			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
+		}
+
+		private void ConnectionShutdown(object obj, ShutdownEventArgs msg)
+		{
+			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
+		}
+
 		private void ConsumerShutdown(object obj, ShutdownEventArgs msg)
 		{
-			this.log.Info($"{new StackTrace().ToStringClassMethod()}: Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}");
-			RecoverIfNeeded();
+			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
 		}
 
 		private void ConsumerCancelled(object obj, ConsumerEventArgs msg)
 		{
-			this.log.Info($"{new StackTrace().ToStringClassMethod()}: Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}");
-			RecoverIfNeeded();
+			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
 		}
 
 		private void ConsumerUnregistered(object obj, ConsumerEventArgs msg)
 		{
-			this.log.Info($"{new StackTrace().ToStringClassMethod()}: Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}");
-			RecoverIfNeeded();
+			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
 		}
-		private void RecoverIfNeeded()
-		{
-			if (!this.DisposingOnPurpouse)
-			{
-				this.log.Error($"{new StackTrace().ToStringClassMethod()}: this.DisposingOnPurpouse = false");
-				this.connection.Dispose();
-				this.channel.Dispose();
-				this.Listen();
-			}
-		}
+
 		private string GetObjectName(object obj)
 		{
 			return obj.GetType().Name;
 		}
 
+		/// <summary>
+		/// Este método a resultado peor que dejar a RabbitMQ restaurarse a sí mismo.
+		/// Lo dejo (aunque no se use) para darle una vuelta en el futuro
+		/// </summary>
+		private void RecoverIfNeeded()
+		{
+			try
+			{
+				if (!this.DisposingOnPurpouse && this.channel != null)
+				{
+					var internalRestartRetrays = 10;
+					this.log.Info($"InternalRestartRetrays hardcoded: {internalRestartRetrays}", new StackTrace());
+					new Insister(this.log).Insist(new Action(() => InternalRestart()), internalRestartRetrays);
+				}
+			}
+
+			catch (Exception ex)
+			{
+				string errorMessage = "Se ha intentado recuperar la conexión con RabbitMQ, pero no se ha podido";
+				this.log.Fatal($"{new StackTrace().ToStringClassMethod()}: {errorMessage}", ex);
+				this?.ErrorFatalEvent(this, $"{errorMessage}. Excepción: {ex.Message}");
+			}
+		}		
+		private void InternalRestart()
+		{
+			this.log.Error($"this.DisposingOnPurpouse = false", null, new StackTrace());
+
+			var internalRestartSeconds = 60 * 60; // Una hora
+			this.log.Info($"InternalRestartSeconds hardcoded: {internalRestartSeconds}", new StackTrace());
+			Thread.Sleep(internalRestartSeconds * 1000);
+
+			CloseConnection();
+
+			this.Listen();
+		}
+
 		public void Dispose()
 		{
 			this.DisposingOnPurpouse = true;
-			this.connection.Dispose();
-			this.channel.Dispose();
+			CloseConnection();
 
-			this.log.Info($"{new StackTrace().ToStringClassMethod()}");
+			this.log.Info($"Connection Closed", new StackTrace());
+		}
+
+		private void CloseConnection()
+		{
+			this.channel?.Close();
+			this.connection?.Close();
+			this.channel = null;
+			this.connection = null;
+			GC.Collect();
 		}
 	}
 }

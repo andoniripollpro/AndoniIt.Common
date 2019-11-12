@@ -6,7 +6,7 @@ namespace MovistarPlus.Common.Common
 	{
 		public static string ToStringClassMethod(this StackTrace stackTrace)
 		{			
-			var callingStackTraceFrame = new StackTrace().GetFrame(1);
+			var callingStackTraceFrame = new StackTrace().GetFrame(2);
 			return $"{callingStackTraceFrame.GetMethod().ReflectedType.Name}.{callingStackTraceFrame.GetMethod().Name}";
 		}
 	}

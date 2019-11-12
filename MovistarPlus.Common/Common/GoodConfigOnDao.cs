@@ -23,6 +23,7 @@ namespace MovistarPlus.Common
 
 		public GoodConfigOnDao(IIoCObjectContainer ioCObjectContainer, string connectionString, string appId, int secondsToRefreshConfig = 0)
 		{
+
 			this.ioCObjectContainer = ioCObjectContainer ?? throw new ArgumentNullException("ioCObjectContainer");
 			if (string.IsNullOrWhiteSpace(connectionString))
 				throw new ArgumentNullException("connectionString");
@@ -72,8 +73,10 @@ namespace MovistarPlus.Common
 
 		public XmlNode GetXmlNodeByTagAddress(string tagAddress)
 		{
-			string content = GetRootJString();
-			XmlDocument doc = JsonConvert.DeserializeXmlNode(content);
+			var content = JToken.Parse(GetRootJString());
+			var jObject = new JObject();
+			jObject["root"] = content;
+			XmlDocument doc = JsonConvert.DeserializeXmlNode(jObject.ToString());
 			return doc.ChildNodes[0][tagAddress];
 		}
 		private string GetRootJString()
@@ -100,12 +103,13 @@ namespace MovistarPlus.Common
 			this.log.Debug(query);
 			var configurationList = connection.Query<dynamic>(query).ToList();
 
+			string errorMessage = $"Existen {configurationList.Count()} registros de configuración en la base de datos el nombre {this.appId} y rango de fechas actual, y se espera 1 y sólo 1 ";
 			if (configurationList.Count() == 0)
-				throw new ConfigurationErrorsException($"Existen {configurationList.Count()} registros de configuración en la base de datos para este sistema y rango de fechas, y se espera sólo 1");
+				throw new ConfigurationErrorsException(errorMessage);
 			else
 			{
 				string configurationInJson = configurationList[0].CONFIGURACION.ToString();
-				if (configurationList.Count() > 1) this.log.Error($"Existen {configurationList.Count()} registros de configuración en la base de datos para este sistema y rango de fechas, y se espera sólo 1");
+				if (configurationList.Count() > 1) this.log.Error(errorMessage);
 				//this.log.Info($"Esta es la configuración leída de la BD: {Environment.NewLine}{configurationInJson}");
 				return configurationInJson;
 			}

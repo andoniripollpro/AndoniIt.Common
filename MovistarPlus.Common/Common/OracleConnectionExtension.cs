@@ -10,27 +10,28 @@ namespace MovistarPlus.Common.Common
 		public static void EnsureDatabaseConnection(this OracleConnection oracleConnection)
 		{
 			var log = IoCObjectContainer.Singleton.Get<ILog>();
-			for (int i = 0; i < 100; i++)
+			try
 			{
-				try
-				{
-					if (oracleConnection.State != ConnectionState.Open)
-					{
-						oracleConnection.Open();
-						log.Debug("Connection.Open();");
-					}
-					else
-					{
-						log.Debug("Connection already openned");
-						break;
-					}
-				}
-				catch (Exception e)
-				{
-					log.Warn("EnsureDatabaseConnection. Connection to database lost.", e);
-				}
+				new Insister(log).Insist(new Action(() => oracleConnection.OpenIfNeeded()), 5);
+			}
+			catch (Exception e)
+			{
+				log.Warn("EnsureDatabaseConnection. Connection to database lost.", e);
 			}
 		}
 
+		public static void OpenIfNeeded(this OracleConnection oracleConnection)
+		{
+			var log = IoCObjectContainer.Singleton.Get<ILog>();
+			if (oracleConnection.State != ConnectionState.Open)
+			{
+				oracleConnection.Open();
+				log.Debug("Connection.Open();");
+			}
+			else
+			{
+				log.Debug("Connection already openned");				
+			}
+		}
 	}
 }

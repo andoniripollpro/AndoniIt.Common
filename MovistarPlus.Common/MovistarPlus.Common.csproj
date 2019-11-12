@@ -63,8 +63,8 @@
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.6.5\lib\net45\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="Oracle.ManagedDataAccess, Version=4.121.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <HintPath>..\packages\Oracle.ManagedDataAccess.12.1.24160719\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\..\ProductosMovistar\packages\Oracle.ManagedDataAccess.12.2.1100\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
     <Reference Include="RabbitMQ.Client, Version=5.0.0.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
       <HintPath>..\packages\RabbitMQ.Client.5.1.0\lib\net451\RabbitMQ.Client.dll</HintPath>
@@ -95,10 +95,10 @@
     <Compile Include="Common\EncodingMapper.cs" />
     <Compile Include="Common\ExceptionExtender.cs" />
     <Compile Include="Common\GenericExtensions.cs" />
-    <Compile Include="Common\GoodConfigOnBoxDb.cs" />
     <Compile Include="Common\GoodConfigOnDao.cs" />
     <Compile Include="Common\Insister.cs" />
     <Compile Include="Common\IoCObjectContainer.cs" />
+    <Compile Include="Interface\IRabbitMQConsumer.cs" />
     <Compile Include="Common\Log4NetWrapper.cs" />
     <Compile Include="Common\NLogWrapper.cs" />
     <Compile Include="Common\OracleConnectionExtension.cs" />
@@ -106,8 +106,7 @@
     <Compile Include="Common\RabbitMQConsumer.cs" />
     <Compile Include="Common\RabbitMQPublisher.cs" />
     <Compile Include="Common\StackTraceExtender.cs" />
-    <Compile Include="Common\StringDecorator.cs" />
-    <Compile Include="Common\VersionExtender.cs" />
+    <Compile Include="Common\StringAdapter.cs" />
     <Compile Include="Common\XmlStringExtender.cs" />
     <Compile Include="Dto\BoxConfigDto.cs" />
     <Compile Include="Common\CmdCommand.cs" />
@@ -115,7 +114,6 @@
     <Compile Include="Common\DomainUserDto.cs" />
     <Compile Include="Common\Encrypter.cs" />
     <Compile Include="Common\EnumAdapter.cs" />
-    <Compile Include="Common\ExceptionAdapter.cs" />
     <Compile Include="Common\GoodConfigOnFiles.cs" />
     <Compile Include="iBoxDB2173.cs" />
     <Compile Include="Interface\IGoodConfig.cs" />

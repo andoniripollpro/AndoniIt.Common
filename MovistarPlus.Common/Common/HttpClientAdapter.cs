@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MovistarPlus.Common
 {
@@ -23,7 +24,9 @@ namespace MovistarPlus.Common
 
 		public T AllCookedUpPost<T>(string url, object body, NetworkCredential credentials = null)
         {
-			return JsonConvert.DeserializeObject<T>(AllCookedUpPost(url, JsonConvert.SerializeObject(body), credentials));
+			string resultStr = AllCookedUpPost(url, JsonConvert.SerializeObject(body), credentials);
+			T resultT = JsonConvert.DeserializeObject<T>(resultStr);
+			return resultT;
 		}
 		public string AllCookedUpPost(string url, object body, NetworkCredential credentials = null)
 		{
@@ -31,7 +34,7 @@ namespace MovistarPlus.Common
 		}
 		public string AllCookedUpPost(string url, string body, NetworkCredential credentials = null)
 		{
-			this.logListener?.Message($"Antes del POST {url}. Credentials: {credentials.UserName} Body: {body}");
+			this.logListener?.Message($"Antes del POST {url}. Credentials: {credentials?.UserName} Body: {body}");
 
 			using (var webApiClient = this.GetDisposableHttpClient(url, credentials))
 			{
@@ -44,6 +47,33 @@ namespace MovistarPlus.Common
 				return responseMessage.Content.ReadAsStringAsync().Result;
 			}
 		}
+		public string AllCookedUpSoap(string url, string body, NetworkCredential credentials = null)
+		{
+			this.logListener?.Message($"Antes del POST SOAP {url}. Credentials: {credentials?.UserName} Body: {body}");
+
+			using (var webApiClient = this.GetDisposableHttpClient(url, credentials))
+			{
+				webApiClient.DefaultRequestHeaders.Add("SOAPAction", url);
+				var content = new StringContent(body, Encoding.UTF8, "text/xml");
+
+				var responseMessage = webApiClient.PostAsync(url, content).Result;
+				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
+				if (!responseMessage.IsSuccessStatusCode)
+					throw new Exception(responseMessage.ReasonPhrase.ToString());
+				return ExtractFromTaskWithEncoding(responseMessage.Content).Result;
+			}
+		}
+
+		private async Task<string> ExtractFromTaskWithEncoding(HttpContent responseContent)
+		{
+			var resultUncodified = await responseContent.ReadAsByteArrayAsync();
+			string result = Encoding.UTF8.GetString(resultUncodified, 0, resultUncodified.Length);
+			//	Limpiando si va encapsulado en un XML
+			if (result.StartsWith("<string"))
+				result = result.SubStringTruncated("<string", "</string>").SubStringTruncated(">").Replace("&lt;", "<").Replace("&gt;", ">");
+			return result;
+		}
+
 		private HttpClient GetDisposableHttpClient(string url, NetworkCredential credentials = null)
         {
             HttpClientHandler handler;
@@ -65,7 +95,7 @@ namespace MovistarPlus.Common
 			if (credentials != null)
 			{
 				var encoding = Encoding.GetEncoding("iso-8859-1");
-				string usuPassString = string.Format("{0}:{1}", credentials.UserName, credentials.Password);
+				string usuPassString = $"{credentials.UserName}:{credentials.Password}";
 				byte[] bytes = Encoding.UTF8.GetBytes(usuPassString);
 				string oauthToken = Convert.ToBase64String(bytes);
 				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", oauthToken);
@@ -122,7 +152,7 @@ namespace MovistarPlus.Common
                 wepApiClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Basic", Convert.ToBase64String(
                         ASCIIEncoding.ASCII.GetBytes(
-                        string.Format("{0}:{1}", credentials.UserName, credentials.Password))));
+                        $"{credentials.UserName}:{credentials.Password}")));
             }
         }
 
@@ -139,8 +169,7 @@ namespace MovistarPlus.Common
                 if (!responseMessage.IsSuccessStatusCode)
                     throw new Exception(responseMessage.ReasonPhrase.ToString());
 				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
-				response = string.Format("StatusCode: {0}, Status: {1}, Body: {2}",
-                    responseMessage.StatusCode, responseMessage.ReasonPhrase, responseMessage.Content.ReadAsStringAsync().Result);
+				response = $"StatusCode: {responseMessage.StatusCode}, Status: {responseMessage.ReasonPhrase}, Body: {responseMessage.Content.ReadAsStringAsync().Result}";
             }
             return response;
         }
@@ -207,7 +236,7 @@ namespace MovistarPlus.Common
                 var responseMessage = wepApiClient.GetAsync(string.Empty).Result;
 				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
 				if (!responseMessage.IsSuccessStatusCode)
-                    throw new Exception(string.Format("HttpClientAdapter.AllCookedUpGet {0}", responseMessage.ReasonPhrase.ToString()));
+                    throw new Exception($"HttpClientAdapter.AllCookedUpGet {responseMessage.ReasonPhrase.ToString()}");
                 response = responseMessage.Content.ReadAsStringAsync().Result;
 			}
             return response;

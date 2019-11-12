@@ -1,11 +1,18 @@
 ﻿using MovistarPlus.Common.Interface;
 using RabbitMQ.Client;
 using System;
+using System.Diagnostics;
 using System.Text;
 using System.Web;
 
 namespace MovistarPlus.Common.Common
 {
+	/// <summary>
+	/// Creará el exchange definidos así:
+	/// amqp://nagra:nagra123@rabbitmq-t.dof6.com:5672/nagra-vhost?exchange=cfi&deliveryMode=2&pipeline=true
+	/// Y no lo creará con los definidos así
+	/// amqp://nagra:nagra123@rabbitmq-t.dof6.com:5672/nagra-vhost?exchange=cfi&deliveryMode=2
+	/// </summary>
 	public class RabbitMQPublisher
 	{
 		private readonly ILog log;
@@ -20,7 +27,7 @@ namespace MovistarPlus.Common.Common
 
 		public void Publish(string datosPublicacion, string routingKey = "", string correlationId = "", string completeConfirmationUri = "")
 		{
-			this.log.Debug($"Start: {datosPublicacion}");
+			this.log.Debug($"Start: {datosPublicacion}", new StackTrace());
 			string exchangeName = HttpUtility.ParseQueryString(this.connectionFactory.Uri.Query).Get("exchange");
 			string confirmationQueue = string.Empty;
 			if (!string.IsNullOrEmpty(completeConfirmationUri))
@@ -41,15 +48,18 @@ namespace MovistarPlus.Common.Common
 					if (correlationId != string.Empty)
 						properties.CorrelationId = correlationId;
 
-					channel.ExchangeDeclare(exchange: exchangeName,
-						type: "fanout",
-						durable: true,
-						 autoDelete: false,
-						 arguments: null);
+					if (this.connectionFactory.Uri.ToString().Contains("pipeline=true"))
+					{
+						channel.ExchangeDeclare(exchange: exchangeName,
+							type: "fanout",
+							durable: true,
+							 autoDelete: false,
+							 arguments: null);
+					}
 
 					byte[] payload = Encoding.UTF8.GetBytes(datosPublicacion);
 					channel.BasicPublish(exchangeName, routingKey, properties, payload);
-					this.log.Info(string.Format("channel.BasicPublish({0}, {1}, {2}, {3})", exchangeName, routingKey, properties, payload), new System.Diagnostics.StackTrace());
+					this.log.Info($"channel.BasicPublish({exchangeName}, {routingKey}, {properties}, {payload})", new StackTrace());
 				}
 			}
 		}

@@ -21,7 +21,7 @@ namespace MovistarPlus.Common
 				case "UTF7":
 					return Encoding.UTF7;
 				default:
-					throw new Exception(string.Format("Mapping Exception: Encoding '{0}' not valid", encoding));
+					throw new Exception($"Mapping Exception: Encoding '{encoding}' not valid");
 			}
 		}
 	}

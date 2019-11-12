@@ -9,7 +9,7 @@ namespace MovistarPlus.Common.Test.Common.Unit
 	public class InsisterTest
 	{
 		[TestMethod]
-		public void Insist__NoErrorReturnVoid_OneCall()
+		public void Insist_NoErrorReturnVoid_OneCall()
 		{
 			//	Arrange
 			var objetoStub = new Mock<IHaceCosas>();
@@ -28,7 +28,7 @@ namespace MovistarPlus.Common.Test.Common.Unit
 		}
 		
 		[TestMethod]
-		public void Insist__OneErrorReturnVoid_TwoCalls()
+		public void Insist_OneErrorReturnVoid_TwoCalls()
 		{
 			//	Arrange
 			var objetoStub = new Mock<IHaceCosas>();
@@ -51,7 +51,7 @@ namespace MovistarPlus.Common.Test.Common.Unit
 		}
 
 		[TestMethod]
-		public void Insist__MoreErrorThanSetReturnVoid_Exception()
+		public void Insist_MoreErrorThanSetReturnVoid_Exception()
 		{
 			//	Arrange
 			var objetoStub = new Mock<IHaceCosas>();
@@ -73,7 +73,7 @@ namespace MovistarPlus.Common.Test.Common.Unit
 		}
 
 		[TestMethod]
-		public void Insist__NoErrorReturnInt_OneCall()
+		public void Insist_NoErrorReturnInt_OneCall()
 		{
 			//	Arrange
 			var objetoStub = new Mock<IHaceCosas>();
@@ -88,7 +88,7 @@ namespace MovistarPlus.Common.Test.Common.Unit
 		}
 
 		[TestMethod]
-		public void Insist__OneErrorReturnInt_TwoCalls()
+		public void Insist_OneErrorReturnInt_TwoCalls()
 		{
 			//	Arrange
 			var objetoStub = new Mock<IHaceCosas>();
@@ -113,7 +113,7 @@ namespace MovistarPlus.Common.Test.Common.Unit
 		}
 
 		[TestMethod]
-		public void Insist__MoreErrorThanSetReturnInt_Exception()
+		public void Insist_MoreErrorThanSetReturnInt_Exception()
 		{
 			//	Arrange
 			var objetoStub = new Mock<IHaceCosas>();

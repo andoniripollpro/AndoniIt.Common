@@ -5,11 +5,11 @@ namespace MovistarPlus.Common
 {
 	public static class GenericExtensions
 	{
-		public static string BetterToString(this List<string> list, bool withSimpleQuotation = true)
+		public static string BetterToString(this List<string> list, string quotation = null)
 		{
 			StringBuilder strBuilder = new StringBuilder("(");
-			if (withSimpleQuotation)
-				list.ForEach(x => strBuilder.Append("'").Append(x?.Trim()).Append("',"));
+			if (quotation != null)
+				list.ForEach(x => strBuilder.Append(quotation).Append(x?.Trim()).Append($"{quotation},"));
 			else
 				list.ForEach(x => strBuilder.Append(x?.Trim()).Append(","));
 			if (strBuilder.Length > 1)
@@ -22,7 +22,7 @@ namespace MovistarPlus.Common
 		{
 			List<string> stringList = new List<string>();
 			list.ForEach(x => stringList.Add(x.ToString()));
-			return stringList.BetterToString(false);
+			return stringList.BetterToString();
 		}
 	}
 }

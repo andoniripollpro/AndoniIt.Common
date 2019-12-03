@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace MovistarPlus.Common.Dto
 {
@@ -9,5 +8,6 @@ namespace MovistarPlus.Common.Dto
 		public bool Error { get; set; } = false;
 		public Exception Exception { get; set; } = null;
 		public Version Version { get; set; } = null;
+		public string CorrelationId { get; set; } = null;
 	}
 }

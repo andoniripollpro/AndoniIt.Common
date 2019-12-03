@@ -1,4 +1,5 @@
-﻿using MovistarPlus.Common.Interface;
+﻿using MovistarPlus.Common.Dto;
+using MovistarPlus.Common.Interface;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -12,8 +13,8 @@ namespace MovistarPlus.Common.Common
 {
 	public class RabbitMQConsumer : IDisposable, IRabbitMQConsumer
 	{
-		public event EventHandler<string> MessageArrived;
-		public event EventHandler<string> ErrorFatalEvent;
+		public event EventHandler<Envelope<string>> MessageArrived;
+		public event EventHandler<Envelope<string>> ErrorFatalEvent;
 
 		private readonly ILog log;
 		private readonly ConnectionFactory connectionFactory;
@@ -33,7 +34,7 @@ namespace MovistarPlus.Common.Common
 
 		public void Listen()
 		{
-			this.log.Info($"Listening on completeUri '{this.amqpUrlListen}'", new StackTrace());
+			this.log.Info($"Start on completeUri '{this.amqpUrlListen}'", new StackTrace());
 
 			try
 			{				
@@ -68,6 +69,7 @@ namespace MovistarPlus.Common.Common
 				this.log.Fatal($"No es capaz de escuchar los mensajes de la cola RabbitMQ", e, new StackTrace());
 				throw;
 			}
+			this.log.Info($"End", new StackTrace());
 		}
 
 		public void ConsumeMessage(BasicDeliverEventArgs ea)
@@ -80,7 +82,7 @@ namespace MovistarPlus.Common.Common
 				correlationId = ea.BasicProperties.CorrelationId;
 				message = Encoding.UTF8.GetString(body);
 
-				this.MessageArrived?.Invoke(this, message);
+				this.MessageArrived?.Invoke(this, new Envelope<string>() { Content = message, CorrelationId = ea.BasicProperties.CorrelationId });
 
 				this.channel.BasicAck(ea.DeliveryTag, false);
 
@@ -147,7 +149,7 @@ namespace MovistarPlus.Common.Common
 			{
 				string errorMessage = "Se ha intentado recuperar la conexión con RabbitMQ, pero no se ha podido";
 				this.log.Fatal($"{new StackTrace().ToStringClassMethod()}: {errorMessage}", ex);
-				this?.ErrorFatalEvent(this, $"{errorMessage}. Excepción: {ex.Message}");
+				this?.ErrorFatalEvent(this, new Envelope<string>() { Content = errorMessage, Exception = ex });
 			}
 		}		
 		private void InternalRestart()

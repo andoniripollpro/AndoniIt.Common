@@ -1,4 +1,4 @@
-﻿//#define WINDOWS_PHONE
+﻿
 //#define NET2
 
 using System;
@@ -688,12 +688,6 @@ namespace iBoxDB
             //DB.Root(path); DB Files Path
 #if (WINDOWS_PHONE || UNITY_WP8) && (!UNITY_EDITOR)
             DB.Root(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
-#else
-#if (NETFX_CORE || UNITY_METRO) && (!UNITY_EDITOR)
-          
-#else
-            Xamarin_IL2CPP_MakeSureClassesAreLinked();
-#endif
 #endif
 
         }
@@ -735,12 +729,7 @@ namespace iBoxDB
         {
             DDebug.DeleteDBFiles(new long[] { 1, 10, 20, -10 });
         }
-        private static void Xamarin_IL2CPP_MakeSureClassesAreLinked()
-        {
-#if !NETFX_CORE && !UNITY_METRO && !WINDOWS_PHONE && !UNITY_WP8 && !UNITY_EDITOR
-      
-#endif
-        }
+   
     }
 
     public class Package

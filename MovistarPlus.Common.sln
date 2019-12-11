@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovistarPlus.Common", "MovistarPlus.Common\MovistarPlus.Common.csproj", "{F0734BC5-4BAA-4AC4-AE1A-723B405A6104}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovistarPlus.Common.Test", "MovistarPlus.Common.Test\MovistarPlus.Common.Test.csproj", "{0559BABC-18B7-434D-B69B-A3A4542A01FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovistarPlus.Common.Test", "MovistarPlus.Common.Test\MovistarPlus.Common.Test.csproj", "{38FB0FB1-D676-4107-986C-FF1D030EF17F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,12 +20,12 @@ Global
 		{F0734BC5-4BAA-4AC4-AE1A-723B405A6104}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F0734BC5-4BAA-4AC4-AE1A-723B405A6104}.Stage|Any CPU.ActiveCfg = Stage|Any CPU
 		{F0734BC5-4BAA-4AC4-AE1A-723B405A6104}.Stage|Any CPU.Build.0 = Stage|Any CPU
-		{0559BABC-18B7-434D-B69B-A3A4542A01FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0559BABC-18B7-434D-B69B-A3A4542A01FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0559BABC-18B7-434D-B69B-A3A4542A01FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0559BABC-18B7-434D-B69B-A3A4542A01FD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0559BABC-18B7-434D-B69B-A3A4542A01FD}.Stage|Any CPU.ActiveCfg = Release|Any CPU
-		{0559BABC-18B7-434D-B69B-A3A4542A01FD}.Stage|Any CPU.Build.0 = Release|Any CPU
+		{38FB0FB1-D676-4107-986C-FF1D030EF17F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38FB0FB1-D676-4107-986C-FF1D030EF17F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38FB0FB1-D676-4107-986C-FF1D030EF17F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38FB0FB1-D676-4107-986C-FF1D030EF17F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38FB0FB1-D676-4107-986C-FF1D030EF17F}.Stage|Any CPU.ActiveCfg = Release|Any CPU
+		{38FB0FB1-D676-4107-986C-FF1D030EF17F}.Stage|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

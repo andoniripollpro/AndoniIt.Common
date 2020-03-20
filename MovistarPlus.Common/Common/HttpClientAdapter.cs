@@ -1,9 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using MovistarPlus.Common.Common;
+using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -85,12 +88,14 @@ namespace MovistarPlus.Common
                 handler.PreAuthenticate = true;
                 handler.Proxy = WebRequest.DefaultWebProxy;
                 handler.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
-            }			
+            }
 
 			HttpClient client = new HttpClient(handler)
             {
                 BaseAddress = new Uri(url)				
 			};
+
+			client.DefaultRequestHeaders.UserAgent.TryParseAdd(Assembly.GetExecutingAssembly().GetName().Name);
 
 			if (credentials != null)
 			{

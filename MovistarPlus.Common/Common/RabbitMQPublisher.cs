@@ -44,6 +44,7 @@ namespace MovistarPlus.Common.Common
 				if (confirmationQueue is null)
 					throw new ArgumentException($"La Uri de respuesta de este mensaje tiene que tener una queue válida para que responda por ella. completeConfirmationUri = '{completeConfirmationUri}'");
 			}
+			this.log.Debug($"confirmationQueue: {confirmationQueue}", new StackTrace());
 
 			using (IConnection connection = this.connectionFactory.CreateConnection())
 			{

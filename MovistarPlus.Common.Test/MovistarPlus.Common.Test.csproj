@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Integration\GoodConfigOnDaoTest.cs" />
+    <Compile Include="Common\Unit\EncrypterTest.cs" />
     <Compile Include="Common\Unit\GenericExtensionsTest.cs" />
     <Compile Include="Common\Unit\InsisterTest.cs" />
     <Compile Include="Common\Unit\StringAdapterTest.cs" />

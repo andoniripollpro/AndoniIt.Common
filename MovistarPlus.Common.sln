@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovistarPlus.Common", "MovistarPlus.Common\MovistarPlus.Common.csproj", "{F0734BC5-4BAA-4AC4-AE1A-723B405A6104}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovistarPlus.Common.Test", "MovistarPlus.Common.Test\MovistarPlus.Common.Test.csproj", "{38FB0FB1-D676-4107-986C-FF1D030EF17F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovistarPlus.Common.Service", "MovistarPlus.Common.Service\MovistarPlus.Common.Service.csproj", "{CA391346-38C3-473E-AD99-E6CE037AC6D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovistarPlus.Common.Service.ExampleTest", "MovistarPlus.Common.Service.ExampleTest\MovistarPlus.Common.Service.ExampleTest.csproj", "{3BF48AFC-155C-41FE-8F88-FA8753359B53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +30,18 @@ Global
 		{38FB0FB1-D676-4107-986C-FF1D030EF17F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{38FB0FB1-D676-4107-986C-FF1D030EF17F}.Stage|Any CPU.ActiveCfg = Release|Any CPU
 		{38FB0FB1-D676-4107-986C-FF1D030EF17F}.Stage|Any CPU.Build.0 = Release|Any CPU
+		{CA391346-38C3-473E-AD99-E6CE037AC6D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA391346-38C3-473E-AD99-E6CE037AC6D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA391346-38C3-473E-AD99-E6CE037AC6D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA391346-38C3-473E-AD99-E6CE037AC6D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA391346-38C3-473E-AD99-E6CE037AC6D6}.Stage|Any CPU.ActiveCfg = Release|Any CPU
+		{CA391346-38C3-473E-AD99-E6CE037AC6D6}.Stage|Any CPU.Build.0 = Release|Any CPU
+		{3BF48AFC-155C-41FE-8F88-FA8753359B53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BF48AFC-155C-41FE-8F88-FA8753359B53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BF48AFC-155C-41FE-8F88-FA8753359B53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BF48AFC-155C-41FE-8F88-FA8753359B53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BF48AFC-155C-41FE-8F88-FA8753359B53}.Stage|Any CPU.ActiveCfg = Release|Any CPU
+		{3BF48AFC-155C-41FE-8F88-FA8753359B53}.Stage|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

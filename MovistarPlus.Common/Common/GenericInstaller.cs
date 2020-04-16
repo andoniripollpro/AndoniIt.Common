@@ -5,7 +5,7 @@ using System.ServiceProcess;
 
 namespace MovistarPlus.Common
 {
-	/// <summary>
+	/// <summary>	
 	/// Necesita que en la App.config exista en appSettings con las variables ServiceName y ServiceDescription
 	/// Se necesita heredar de ella en el proyecto raíz que se quiera utilizar
 	/// </summary>

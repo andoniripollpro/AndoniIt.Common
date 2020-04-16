@@ -40,6 +40,8 @@ namespace MovistarPlus.Common
 
 		public ILog Log => log;
 
+		public string ConnectionString => connectionString;
+
 		public void AddUpdateFromJToken(JToken configuration)
 		{
 			throw new NotImplementedException();
@@ -97,7 +99,7 @@ namespace MovistarPlus.Common
 
 		private string GetRootJStringFromDB()
 		{
-			var connection = new OracleConnection(this.connectionString);
+			var connection = new OracleConnection(this.ConnectionString);
 			connection.EnsureDatabaseConnection();
 			string query = SELECT_CONFIG.Replace("{appId}", this.appId);
 			this.log.Debug(query);

@@ -28,5 +28,13 @@ namespace MovistarPlus.Common
 
 			return localTime;
 		}
+
+		public static string AssemblyDirectory(this Assembly assembly)
+		{
+			UriBuilder uri = new UriBuilder(assembly.CodeBase);
+			string path = Uri.UnescapeDataString(uri.Path);
+			return Path.GetDirectoryName(path);
+		}
+
 	}
 }

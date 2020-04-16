@@ -77,7 +77,7 @@ namespace MovistarPlus.Common
 			return result;
 		}
 
-		private HttpClient GetDisposableHttpClient(string url, NetworkCredential credentials = null)
+		public HttpClient GetDisposableHttpClient(string url, NetworkCredential credentials = null)
         {
             HttpClientHandler handler;
             if (credentials == null)
@@ -163,40 +163,35 @@ namespace MovistarPlus.Common
 
         public string AllCookedUpPut(string url, object body, NetworkCredential credentials = null)
         {
-			this.logListener?.Message($"Antes del PUT {url}. Credentials: {credentials.UserName} Body: {body}");
 			string response = "ERROR";
 
-            using (var wepApiClient = this.GetDisposableHttpClient(url, credentials))
-            {
-                StringContent content = new StringContent(body is string ? body.ToString() : JsonConvert.SerializeObject(body));
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var responseMessage = wepApiClient.PutAsync(string.Empty, content).Result;
-                if (!responseMessage.IsSuccessStatusCode)
-                    throw new Exception(responseMessage.ReasonPhrase.ToString());
-				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
-				response = $"StatusCode: {responseMessage.StatusCode}, Status: {responseMessage.ReasonPhrase}, Body: {responseMessage.Content.ReadAsStringAsync().Result}";
-            }
+			var responseMessage = this.StandardPut(url, body, credentials);
+			this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
+			if (!responseMessage.IsSuccessStatusCode)
+                throw new Exception(responseMessage.ReasonPhrase.ToString());			
+			response = $"StatusCode: {responseMessage.StatusCode}, Status: {responseMessage.ReasonPhrase}, Body: {responseMessage.Content.ReadAsStringAsync().Result}";
+            
             return response;
         }
+		public HttpResponseMessage StandardPut(string url, object body, NetworkCredential credentials = null)
+		{
+			this.logListener?.Message($"Antes del PUT {url}. Credentials: {credentials.UserName} Body: {body}");
+			HttpResponseMessage responseMessage;
+
+			using (var wepApiClient = this.GetDisposableHttpClient(url, credentials))
+			{
+				StringContent content = new StringContent(body is string ? body.ToString() : JsonConvert.SerializeObject(body));
+				content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+				responseMessage = wepApiClient.PutAsync(string.Empty, content).Result;
+			}
+			return responseMessage;
+		}
 		public T AllCookedUpPut<T>(string url, object body, NetworkCredential credentials = null)
 		{
 			string strResult = AllCookedUpPut(url, body, credentials);
 			return JsonConvert.DeserializeObject<T>(strResult);
 		}
 
-		//public string AllCookedUpUploadFile(string url, string completeFileAddress, NetworkCredential credentials = null)
-		//{
-		//	this.logListener?.Message($"Antes del PUT {url}. Credentials: {credentials.UserName} CompleteFileAddress: {completeFileAddress}");
-		//	string response = "ERROR";
-
-		//	var webClient = new WebClient();
-		//	webClient.Credentials = credentials;
-		//	var result = webClient.UploadFile(url, "PUT", completeFileAddress);
-		//	this.logListener?.Message($"Response.StatusCode = WebClient puede realizar muchas llamadas: 2XX");
-		//	response = Encoding.Default.GetString(result);
-
-		//	return response;
-		//}
 		public void AllCookedUpUploadFile(string url, string completeFileAddress, NetworkCredential credentials = null)
 		{
 			this.logListener?.Message($"Uploading {completeFileAddress} to {url}");
@@ -231,19 +226,29 @@ namespace MovistarPlus.Common
 			rs.Close();
 		}
 
+		public HttpResponseMessage StandardGet(string url, NetworkCredential credentials = null)
+		{
+			this.logListener?.Message($"Antes del GET {url}. Credentials: {credentials.UserName}");
+			HttpResponseMessage responseMessage;
+
+			using (var wepApiClient = this.GetDisposableHttpClient(url, credentials))
+			{
+				responseMessage = wepApiClient.GetAsync(string.Empty).Result;
+				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
+			}
+			return responseMessage;
+		}
+
 		public string AllCookedUpGet(string url, NetworkCredential credentials = null)
         {
 			this.logListener?.Message($"Antes del GET {url}. Credentials: {credentials.UserName}");
 			string response = "ERROR";
 
-            using (var wepApiClient = this.GetDisposableHttpClient(url, credentials))
-            {
-                var responseMessage = wepApiClient.GetAsync(string.Empty).Result;
-				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
-				if (!responseMessage.IsSuccessStatusCode)
-                    throw new Exception($"HttpClientAdapter.AllCookedUpGet {responseMessage.ReasonPhrase.ToString()}");
-                response = responseMessage.Content.ReadAsStringAsync().Result;
-			}
+			var responseMessage = this.StandardGet(url, credentials);
+            if (!responseMessage.IsSuccessStatusCode)
+                throw new Exception($"HttpClientAdapter.AllCookedUpGet {responseMessage.ReasonPhrase.ToString()}");
+            response = responseMessage.Content.ReadAsStringAsync().Result;
+			
             return response;
         }
 

@@ -36,6 +36,8 @@ namespace MovistarPlus.Common
 			this.configFileName = configFileName;
 		}
 
+		public string ConnectionString => throw new NotImplementedException("ConnectionString en GoodConfigOnFiles no se usa");
+
 		public XmlNode GetXmlNodeByTagAddress(string tagAddress)
 		{
 			//var stackTrace = new StackTrace();

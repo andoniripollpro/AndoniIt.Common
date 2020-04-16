@@ -1,2 +1,0 @@
-﻿La firma AssemblySignature.pfx tiene password:
-ABC45678

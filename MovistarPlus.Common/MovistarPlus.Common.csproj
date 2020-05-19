@@ -91,6 +91,7 @@
   <ItemGroup>
     <Compile Include="Common\AssemblyExtension.cs" />
     <Compile Include="Common\CachedValue.cs" />
+    <Compile Include="Common\ConfigParser.cs" />
     <Compile Include="Common\FileSystemWithCredentials.cs" />
     <Compile Include="Common\GenericInstaller.cs">
       <SubType>Component</SubType>

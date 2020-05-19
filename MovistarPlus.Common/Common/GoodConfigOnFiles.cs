@@ -1,4 +1,5 @@
 ﻿using MovistarPlus.Common;
+using MovistarPlus.Common.Common;
 using MovistarPlus.Common.Interface;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,7 +14,7 @@ using System.Xml;
 
 namespace MovistarPlus.Common
 {
-	public class GoodConfigOnFiles : IGoodConfig
+	public class GoodConfigOnFiles : ConfigParser
 	{
 		private static IGoodConfig presetConfig = null;
 		private ConnectData connecData = null;
@@ -36,9 +37,9 @@ namespace MovistarPlus.Common
 			this.configFileName = configFileName;
 		}
 
-		public string ConnectionString => throw new NotImplementedException("ConnectionString en GoodConfigOnFiles no se usa");
+		public override string ConnectionString => throw new NotImplementedException("ConnectionString en GoodConfigOnFiles no se usa");
 
-		public XmlNode GetXmlNodeByTagAddress(string tagAddress)
+		public override XmlNode GetXmlNodeByTagAddress(string tagAddress)
 		{
 			//var stackTrace = new StackTrace();
 			var callingAssembly = Assembly.GetCallingAssembly();
@@ -110,13 +111,13 @@ namespace MovistarPlus.Common
 			return next;
 		}
 
-		public JToken GetJNodeByTagAddress(string tagAddress)
+		public override JToken GetJNodeByTagAddress(string tagAddress)
 		{
 			string json = JsonConvert.SerializeXmlNode(this.GetXmlNodeByTagAddress(tagAddress));
 			return JToken.Parse(json);
 		}
 
-		public void AddUpdateFromJToken(JToken configuration)
+		public override void AddUpdateFromJToken(JToken configuration)
 		{
 			throw new NotImplementedException();
 		}

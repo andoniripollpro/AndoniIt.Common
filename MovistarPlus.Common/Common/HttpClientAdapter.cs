@@ -44,10 +44,12 @@ namespace MovistarPlus.Common
 				StringContent content = new StringContent(body);
 				content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 				var responseMessage = webApiClient.PostAsync(string.Empty, content).Result;
-				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
+				string responseExplanation = $"Response.StatusCode = {(int)responseMessage.StatusCode}; {responseMessage.ReasonPhrase.ToString()}";
+				string responseBody = responseMessage.Content.ReadAsStringAsync().Result;
+				this.logListener?.Message(responseExplanation);
 				if (!responseMessage.IsSuccessStatusCode)
-					throw new Exception(responseMessage.ReasonPhrase.ToString());
-				return responseMessage.Content.ReadAsStringAsync().Result;
+					throw new Exception($"{responseExplanation}. Body: {responseBody}");
+				return responseBody;
 			}
 		}
 		public string AllCookedUpSoap(string url, string body, NetworkCredential credentials = null)

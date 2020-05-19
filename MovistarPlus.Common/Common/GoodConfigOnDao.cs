@@ -11,7 +11,7 @@ using Oracle.ManagedDataAccess.Client;
 
 namespace MovistarPlus.Common
 {
-	public class GoodConfigOnDao : IGoodConfig
+	public class GoodConfigOnDao : ConfigParser
 	{
 		private readonly IIoCObjectContainer ioCObjectContainer;
 		private readonly string connectionString;
@@ -40,14 +40,14 @@ namespace MovistarPlus.Common
 
 		public ILog Log => log;
 
-		public string ConnectionString => connectionString;
+		public override string ConnectionString => connectionString;
 
-		public void AddUpdateFromJToken(JToken configuration)
+		public override void AddUpdateFromJToken(JToken configuration)
 		{
 			throw new NotImplementedException();
 		}
 
-		public JToken GetJNodeByTagAddress(string tagAddress = null)
+		public override JToken GetJNodeByTagAddress(string tagAddress = null)
 		{
 			string json = GetRootJString();
 			JToken jTokenParsed = JToken.Parse(json);
@@ -73,7 +73,7 @@ namespace MovistarPlus.Common
 				return jToken;
 		}
 
-		public XmlNode GetXmlNodeByTagAddress(string tagAddress)
+		public override XmlNode GetXmlNodeByTagAddress(string tagAddress)
 		{
 			var content = JToken.Parse(GetRootJString());
 			var jObject = new JObject();

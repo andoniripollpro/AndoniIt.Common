@@ -5,7 +5,7 @@ using System.Data;
 
 namespace AndoIt.Common.Common
 {
-	static class OracleConnectionExtension
+	public static class OracleConnectionExtension
 	{
 		public static void EnsureDatabaseConnection(this OracleConnection oracleConnection)
 		{

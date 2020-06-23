@@ -3,6 +3,7 @@ using AndoIt.Common.Interface;
 using NLog;
 using System;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace AndoIt.Common
 {
@@ -19,16 +20,18 @@ namespace AndoIt.Common
 			this.incidenceEscalator = incidenceEscalator;
 		}
 				
-		public void Fatal(string message, Exception exception = null, StackTrace stackTrace = null)
+		public void Fatal(string message, Exception exception = null, StackTrace stackTrace = null, params object[] paramValues)
 		{
 			this.incidenceEscalator?.Fatal(message, exception, stackTrace);
-			if (stackTrace != null) message = $"{stackTrace.ToStringClassMethod()}: {message}{Environment.NewLine}{stackTrace.ToString()}";
+			if (stackTrace != null) message = $"{stackTrace.ToStringClassMethod()}: {message}{Environment.NewLine}" 
+					+ $"Params: {ParamsToString(stackTrace.GetFrame(2).GetMethod(), paramValues)}{Environment.NewLine}{stackTrace.ToString()}";
 			this.wrappedLog.Fatal(exception, message);			
 		}		
-		public void Error(string message, Exception exception = null, StackTrace stackTrace = null)
+		public void Error(string message, Exception exception = null, StackTrace stackTrace = null, params object[] paramValues)
 		{
 			this.incidenceEscalator?.Error(message, exception, stackTrace);
-			if (stackTrace != null) message = $"{stackTrace.ToStringClassMethod()}: {message}{Environment.NewLine}{stackTrace.ToString()}";
+			if (stackTrace != null) message = $"{stackTrace.ToStringClassMethod()}: {message}{Environment.NewLine}"
+					+ $"Params: {ParamsToString(stackTrace.GetFrame(2).GetMethod(), paramValues)}{Environment.NewLine}{stackTrace.ToString()}";
 			this.wrappedLog.Error(exception, message);
 		}				
 		public void Warn(string message, Exception exception = null, StackTrace stackTrace = null)
@@ -50,6 +53,21 @@ namespace AndoIt.Common
 		{
 			LogManager.Flush();
 			LogManager.Shutdown();
+		}
+		private string ParamsToString(MethodBase method, params object[] values)
+		{
+			ParameterInfo[] parms = method.GetParameters();
+			object[] namevalues = new object[2 * parms.Length];
+
+			string msg = "(";
+			for (int i = 0, j = 0; i < parms.Length; i++, j += 2)
+			{
+				msg += "{" + j + "}={" + (j + 1) + "}, ";
+				namevalues[j] = parms[i].Name;
+				if (i < values.Length) namevalues[j + 1] = values[i];
+			}
+			msg += ")";
+			return string.Format(msg, namevalues);
 		}
 	}
 }

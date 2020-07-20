@@ -1,7 +1,5 @@
-﻿using AndoIt.Common.Common;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -27,6 +25,7 @@ namespace AndoIt.Common
 
 		public T AllCookedUpPost<T>(string url, object body, NetworkCredential credentials = null)
         {
+
 			string resultStr = AllCookedUpPost(url, JsonConvert.SerializeObject(body), credentials);
 			T resultT = JsonConvert.DeserializeObject<T>(resultStr);
 			return resultT;

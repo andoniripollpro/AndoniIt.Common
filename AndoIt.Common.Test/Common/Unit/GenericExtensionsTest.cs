@@ -14,7 +14,21 @@ namespace AndoIt.Common.Test.Common.Unit
 			string expected = "('uno','dos','tres')";
 
 			//	Act
-			var actual = toTest.BetterToString("'");
+			var actual = toTest.BetterToString("'");			
+
+			//	Assert
+			Assert.IsTrue(actual.Contains(expected));
+			Assert.AreEqual(expected.Length, actual.Length);
+		}
+		[TestMethod]
+		public void BetterToString_NameListWithDoubleComma_OneStringCommaSeparatedDoubleComma()
+		{
+			//	Arrange
+			List<string> toTest = new List<string>(new string[] { "uno", "dos", "tres" });
+			string expected = "(\"uno\",\"dos\",\"tres\")";
+
+			//	Act
+			var actual = toTest.BetterToString("\"");
 
 			//	Assert
 			Assert.IsTrue(actual.Contains(expected));

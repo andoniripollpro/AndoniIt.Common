@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -8,13 +9,19 @@ namespace AndoIt.Common
 	{		
 		private readonly log4net.ILog wrappedLog;
 		private readonly Interface.ILog incidenceEscalator;
+		public readonly List<string> forbiddenWords = new List<string>();
 
 		public const string APP_NAME = "ServicioDaypartSaver";
 
-		public Log4NetWrapper(log4net.ILog wrappedLog, Interface.ILog incidenceEscalator = null)
+		public string FORBIDDEN_WORD_CHARACTERS = "XXXXXXXXXXXXXXXXXXXX";
+
+		public Log4NetWrapper(log4net.ILog wrappedLog, Interface.ILog incidenceEscalator = null, List<string> forbiddenWords = null)
 		{
 			this.wrappedLog = wrappedLog ?? throw new ArgumentNullException("wrappedLog");
 			this.incidenceEscalator = incidenceEscalator;
+			if (forbiddenWords != null) {
+				this.forbiddenWords.AddRange(forbiddenWords);
+			}
 		}
 				
 		public void Fatal(string message, Exception exception = null, StackTrace stackTrace = null, params object[] paramValues)
@@ -40,7 +47,17 @@ namespace AndoIt.Common
 		{
 			if (stackTrace != null) message = $"{StackTraceToString(stackTrace)}: {message}";
 			this.wrappedLog.Info(message);			
-		}				
+		}
+		public void InfoSafe(string message, StackTrace stackTrace)
+		{
+			message = SafeCleanForbiddenWords(message);
+			this.wrappedLog.Info(message);
+		}
+		private string SafeCleanForbiddenWords(string message)
+		{
+			this.forbiddenWords.ForEach(x => message = message.Replace(x, FORBIDDEN_WORD_CHARACTERS));
+			return message;
+		}
 		public void Debug(string message, StackTrace stackTrace = null)
 		{
 			if (stackTrace != null) message = $"{StackTraceToString(stackTrace)}: {message}";

@@ -24,7 +24,6 @@ namespace AndoIt.Common
 
 		public GoodConfigOnDao(IIoCObjectContainer ioCObjectContainer, string connectionString, string appId, int secondsToRefreshConfig = 0)
 		{
-
 			this.ioCObjectContainer = ioCObjectContainer ?? throw new ArgumentNullException("ioCObjectContainer");
 			if (string.IsNullOrWhiteSpace(connectionString))
 				throw new ArgumentNullException("connectionString");
@@ -36,7 +35,7 @@ namespace AndoIt.Common
 			this.log = this.ioCObjectContainer.Get<ILog>();
 			this.configurationInJson = new Insister(this.log).Insist<string>(() => GetRootJStringFromDB() , 2);
 			this.dataBaseLastRead = DateTime.Now;
-			this.log.Debug($"Ended: connectionString: {this.connectionString}", new StackTrace());
+			this.WriteConfigSafeToLog();			
 		}
 
 		public ILog Log => log;
@@ -120,9 +119,26 @@ namespace AndoIt.Common
 			{
 				string configurationInJson = configurationList[0].CONFIGURACION.ToString();
 				if (configurationList.Count() > 1) this.log.Error(errorMessage, null, new StackTrace());
-				this.log.Info($"Esta es la configuración leída de la BD: {Environment.NewLine}{configurationInJson}", new StackTrace());
+				this.log.Info("Config leída de la BD. Oculta en el log por seguridad.");
 				return configurationInJson;
 			}
-		}		
+		}
+
+		private void WriteConfigSafeToLog()
+		{
+			string connectionString = this.connectionString;
+			string configurationInJson = this.configurationInJson;
+			var configLogForbiddenWords = this.GetAsStringList("log.forbiddenWords");
+			if (configLogForbiddenWords != null)
+			{
+				configLogForbiddenWords.ForEach(x =>
+				{
+					connectionString = connectionString.Replace(x, "XXXXXXXXXXXXX");
+					configurationInJson = configurationInJson.Replace(x, "XXXXXXXXXXXXX");
+				});
+			}
+			this.log.Info($"connectionString: {connectionString}", new StackTrace());
+			this.log.Info($"Esta es la configuración leída de la BD: {Environment.NewLine}{configurationInJson}", new StackTrace());
+		}
 	}
 }

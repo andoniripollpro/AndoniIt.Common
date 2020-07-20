@@ -1,7 +1,9 @@
 ﻿using AndoIt.Common.Interface;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Xml;
 
 namespace AndoIt.Common.Common
@@ -37,8 +39,29 @@ namespace AndoIt.Common.Common
                 throw new ConfigurationErrorsException($"No existe, o no está bien expresado (string), el valor con tagAddress '{tagAddress}' en la configuración", ex);
             }
         }
-
-        
-        
+        public bool GetAsBool(string tagAddress)
+        {
+            try
+            {
+                return bool.Parse(this.GetAsString(tagAddress));
+            }
+            catch (Exception ex)
+            {
+                throw new ConfigurationErrorsException($"No existe, o no está bien expresado (bool), el valor con tagAddress '{tagAddress}' en la configuración", ex);
+            }
+        }        
+        public List<string> GetAsStringList(string tagAddress, char separator = ',')
+        {
+            try
+            {
+                string value = this.GetAsString(tagAddress);
+                value = value?.Replace("[", "").Replace("]", "");
+                return new List<string> (value?.Split(new char[] { separator }, StringSplitOptions.RemoveEmptyEntries)).Select(x => x.Trim()).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new ConfigurationErrorsException($"No existe, o no está bien expresado (List<string> con separador '{separator}'), el valor con tagAddress '{tagAddress}' en la configuración", ex);
+            }
+        }
     }
 }

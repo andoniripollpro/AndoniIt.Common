@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
+using System.Collections.Generic;
 using System.Xml;
 
 namespace AndoIt.Common.Interface
@@ -10,10 +10,12 @@ namespace AndoIt.Common.Interface
 
 		string GetAsString(string tagAddress);
 		int GetAsInt(string tagAddress);
+		List<string> GetAsStringList(string tagAddress, char separator = ',');
 
 		XmlNode GetXmlNodeByTagAddress(string tagAddress);
 		JToken GetJNodeByTagAddress(string tagAddress = null);
 		void AddUpdateFromJToken(JToken configuration);
         void ReloadConfig();
+        bool GetAsBool(string v);
     }
 }

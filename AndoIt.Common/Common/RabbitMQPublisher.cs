@@ -25,11 +25,14 @@ namespace AndoIt.Common.Common
 			this.connectionFactory.Uri = new Uri(amqpUrlPublish ?? throw new ArgumentNullException("amqpUrlPublish"));
 		}
 
+		public string AmqpUrlPublish => this.connectionFactory.Uri.ToString();
+
 		public enum PipeType
 		{
 			Exchange,
 			Queue
 		}
+
 		public void Publish(string datosPublicacion, string routingKey = "", string correlationId = "", string completeConfirmationUri = "")
 		{
 			this.log.Debug($"Start: {datosPublicacion}", new StackTrace());

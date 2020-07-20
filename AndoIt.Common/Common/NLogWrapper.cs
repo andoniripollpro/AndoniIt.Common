@@ -2,6 +2,7 @@
 using AndoIt.Common.Interface;
 using NLog;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -11,13 +12,20 @@ namespace AndoIt.Common
 	{		
 		private readonly Logger wrappedLog;
 		private readonly ILog incidenceEscalator;
+		public readonly List<string> forbiddenWords = new List<string>();
 
 		public const string APP_NAME = "ServicioDaypartSaver";
 
-		public NLogWrapper(Logger wrappedLog, ILog incidenceEscalator = null)
+		public string FORBIDDEN_WORD_CHARACTERS = "XXXXXXXXXXXXXXXXXXXX";
+
+		public NLogWrapper(Logger wrappedLog, ILog incidenceEscalator = null, List<string> forbiddenWords = null)
 		{
 			this.wrappedLog = wrappedLog ?? throw new ArgumentNullException("wrappedLog");			
 			this.incidenceEscalator = incidenceEscalator;
+			if (forbiddenWords != null)
+			{
+				this.forbiddenWords.AddRange(forbiddenWords);
+			}
 		}
 				
 		public void Fatal(string message, Exception exception = null, StackTrace stackTrace = null, params object[] paramValues)
@@ -31,7 +39,7 @@ namespace AndoIt.Common
 		{
 			this.incidenceEscalator?.Error(message, exception, stackTrace);
 			if (stackTrace != null) message = $"{stackTrace.ToStringClassMethod()}: {message}{Environment.NewLine}"
-					+ $"Params: {ParamsToString(stackTrace.GetFrame(2).GetMethod(), paramValues)}{Environment.NewLine}{stackTrace.ToString()}";
+					+ $"Params: {ParamsToString(stackTrace.GetFrame(0).GetMethod(), paramValues)}{Environment.NewLine}{stackTrace.ToString()}";
 			this.wrappedLog.Error(exception, message);
 		}				
 		public void Warn(string message, Exception exception = null, StackTrace stackTrace = null)
@@ -43,7 +51,17 @@ namespace AndoIt.Common
 		{
 			if (stackTrace != null) message = $"{stackTrace.ToStringClassMethod()}: {message}";
 			this.wrappedLog.Info(message);			
-		}				
+		}
+		public void InfoSafe(string message, StackTrace stackTrace)
+		{
+			message = SafeCleanForbiddenWords(message);
+			this.wrappedLog.Info(message, stackTrace);
+		}
+		private string SafeCleanForbiddenWords(string message)
+		{
+			this.forbiddenWords.ForEach(x => message = message.Replace(x, FORBIDDEN_WORD_CHARACTERS));
+			return message;
+		}
 		public void Debug(string message, StackTrace stackTrace = null)
 		{
 			if (stackTrace != null) message = $"{stackTrace.ToStringClassMethod()}: {message}";

@@ -9,9 +9,9 @@ namespace AndoIt.Common.Common
 {
 	/// <summary>
 	/// Creará el exchange definidos así:
-	/// amqp://nagra:nagra123@rabbitmq-t.dof6.com:5672/nagra-vhost?exchange=cfi&deliveryMode=2&pipeline=true
-	/// Y no lo creará con los definidos así
-	/// amqp://nagra:nagra123@rabbitmq-t.dof6.com:5672/nagra-vhost?exchange=cfi&deliveryMode=2
+	/// XXXXXXXXXXXXXXXXX
+    /// Y no lo creará con los definidos así
+	/// XXXXXXXXXXXXXXXXXXXXXXX
 	/// </summary>
 	public class RabbitMQPublisher
 	{

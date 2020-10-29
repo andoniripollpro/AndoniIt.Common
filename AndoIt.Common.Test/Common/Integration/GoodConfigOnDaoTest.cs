@@ -6,10 +6,7 @@ namespace AndoIt.Common.Test.Common.Integration
 {
 	[TestClass]
 	public class GoodConfigOnDaoTest
-	{
-        private const string CONNECTIONSTRING = "Data Source=TVIDES.CAT.ES;Persist Security Info=True;User ID=PVR_USER;Password=user347pvr";
-        //private const string CONNECTIONSTRING = "Data Source=//TVIDES.SOGECABLE.COM:1525/TVIDES.SOGECABLE.COM;Persist Security Info=True;User ID=PVR_USER;Password=user347pvr";
-
+	{   
         public GoodConfigOnDaoTest()
 		{
 			Mock<IIoCObjectContainer> inizializeIoCObjectContainer = new TestsHelper().InizializeIoCObjectContainer();

@@ -214,6 +214,27 @@ namespace AndoIt.Common
 			httpWebRequest = null;
 		}
 
+		public void AllCookedUpMoveFile(string url, string completeFileAddress, NetworkCredential credentials = null)
+		{
+			this.logListener?.Message($"Uploading {completeFileAddress} to {url}");
+
+			HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+			httpWebRequest.ContentType = "application/json";
+			httpWebRequest.Method = "PUT";
+			httpWebRequest.KeepAlive = true;
+			httpWebRequest.Credentials = credentials ?? CredentialCache.DefaultCredentials;
+
+			FromFileToStream(completeFileAddress, httpWebRequest.GetRequestStream());
+
+			this.logListener?.Message($"Antes del PUT(UploadFile) {url}. Credentials: {credentials.UserName} File: {completeFileAddress}");
+			using (WebResponse wresp = httpWebRequest.GetResponse())
+			{
+				this.logListener?.Message($"Response.StatusCode = {(int)((HttpWebResponse)wresp).StatusCode}");
+			};
+
+			httpWebRequest = null;
+		}
+
 		private void FromFileToStream(string completeFileAddress, Stream rs)
 		{
 			FileStream fileStream = new FileStream(completeFileAddress, FileMode.Open, FileAccess.Read);

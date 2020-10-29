@@ -34,7 +34,7 @@ namespace AndoIt.Common.Common
 
 		public void Listen()
 		{
-			this.log.Info($"Start on completeUri '{this.amqpUrlListen}'", new StackTrace());
+			this.log.InfoSafe($"Start on completeUri '{this.amqpUrlListen}'", new StackTrace());
 
 			try
 			{				
@@ -86,11 +86,12 @@ namespace AndoIt.Common.Common
 
 				this.channel.BasicAck(ea.DeliveryTag, false);
 
-				this.log.Debug($"Received message '{message}', correlationId {correlationId}. Rabbit queue: {this.amqpUrlListen}", new StackTrace());
+				this.log.InfoSafe($"Received message '{message}', correlationId {correlationId}. Rabbit queue: {this.amqpUrlListen}", new StackTrace());
 			}
 			catch (Exception e)
 			{
-				this.log.Error($"Received message'{message}', correlationId {correlationId}. Rabbit queue: {this.amqpUrlListen}", e, new StackTrace());
+				this.log.Error($"Received message'{message}', correlationId {correlationId}", e, new StackTrace());
+				this.log.InfoSafe($"Rabbit queue: {this.amqpUrlListen}", new StackTrace());
 			}
 		}
 

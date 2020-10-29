@@ -50,9 +50,6 @@
     <Reference Include="Dapper, Version=1.60.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\MovistarPlus.Codificacion\packages\Dapper.1.60.6\lib\net451\Dapper.dll</HintPath>
     </Reference>
-    <Reference Include="iBoxDB.NET2, Version=2.19.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\MovistarPlus.Codificacion\packages\iBoxDB.2.19.1\lib\net20\iBoxDB.NET2.dll</HintPath>
-    </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\MovistarPlus.Productos\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
@@ -92,6 +89,7 @@
     <Compile Include="Common\AssemblyExtension.cs" />
     <Compile Include="Common\CachedValue.cs" />
     <Compile Include="Common\ConfigParser.cs" />
+    <Compile Include="Common\DateTimeExtension.cs" />
     <Compile Include="Common\FileSystemWithCredentials.cs" />
     <Compile Include="Common\GenericInstaller.cs">
       <SubType>Component</SubType>
@@ -99,11 +97,11 @@
     <Compile Include="Common\EncodingMapper.cs" />
     <Compile Include="Common\ExceptionExtender.cs" />
     <Compile Include="Common\GenericExtensions.cs" />
+    <Compile Include="Common\GoodConfigOnResapi.cs" />
     <Compile Include="Common\GoodConfigOnDao.cs" />
     <Compile Include="Common\Insister.cs" />
     <Compile Include="Common\IoCObjectContainer.cs" />
     <Compile Include="Common\UserImpersonator.cs" />
-    <Compile Include="iBoxDB219.cs" />
     <Compile Include="Interface\IFileSystemWithCredentials.cs" />
     <Compile Include="Interface\IRabbitMQConsumer.cs" />
     <Compile Include="Common\Log4NetWrapper.cs" />
@@ -117,7 +115,6 @@
     <Compile Include="Common\XmlStringExtender.cs" />
     <Compile Include="Dto\BoxConfigDto.cs" />
     <Compile Include="Common\CmdCommand.cs" />
-    <Compile Include="Common\ConfigOnBoxDao.cs" />
     <Compile Include="Common\DomainUserDto.cs" />
     <Compile Include="Common\Encrypter.cs" />
     <Compile Include="Common\EnumAdapter.cs" />

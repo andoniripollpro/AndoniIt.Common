@@ -268,7 +268,7 @@ namespace AndoIt.Common
 
 			var responseMessage = this.StandardGet(url, credentials);
             if (!responseMessage.IsSuccessStatusCode)
-                throw new Exception($"HttpClientAdapter.AllCookedUpGet {responseMessage.ReasonPhrase.ToString()}");
+                throw new Exception($"HttpClientAdapter.AllCookedUpGet Response.StatusCode = {(int)responseMessage.StatusCode}: {responseMessage.ReasonPhrase.ToString()}");
             response = responseMessage.Content.ReadAsStringAsync().Result;
 			
             return response;
@@ -283,7 +283,7 @@ namespace AndoIt.Common
 				var responseMessage = wepApiClient.GetAsync(string.Empty).Result;
 				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
 				if (!responseMessage.IsSuccessStatusCode)
-                    throw new Exception(responseMessage.ReasonPhrase.ToString());
+                    throw new Exception($"StatusCode: {responseMessage.StatusCode}, Status: {responseMessage.ReasonPhrase}");
 				var response = JsonConvert.DeserializeObject<T>(responseMessage.Content.ReadAsStringAsync().Result);
 				return response;
             }

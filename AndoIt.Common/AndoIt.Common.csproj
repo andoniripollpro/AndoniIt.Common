@@ -90,6 +90,7 @@
     <Compile Include="Common\CachedValue.cs" />
     <Compile Include="Common\ConfigParser.cs" />
     <Compile Include="Common\DateTimeExtension.cs" />
+    <Compile Include="Common\FileSystem.cs" />
     <Compile Include="Common\FileSystemWithCredentials.cs" />
     <Compile Include="Common\GenericInstaller.cs">
       <SubType>Component</SubType>
@@ -101,8 +102,16 @@
     <Compile Include="Common\GoodConfigOnDao.cs" />
     <Compile Include="Common\Insister.cs" />
     <Compile Include="Common\IoCObjectContainer.cs" />
+    <Compile Include="Common\RandomExtension.cs" />
     <Compile Include="Common\UserImpersonator.cs" />
+    <Compile Include="Infrastructure\Enqueuer.cs" />
+    <Compile Include="Infrastructure\PipeMapper.cs" />
+    <Compile Include="Interface\IDispenser.cs" />
+    <Compile Include="Interface\IEnqueable.cs" />
+    <Compile Include="Interface\IEnqueuer.cs" />
     <Compile Include="Interface\IFileSystemWithCredentials.cs" />
+    <Compile Include="Interface\IMapper.cs" />
+    <Compile Include="Interface\IProcesser.cs" />
     <Compile Include="Interface\IRabbitMQConsumer.cs" />
     <Compile Include="Common\Log4NetWrapper.cs" />
     <Compile Include="Common\NLogWrapper.cs" />

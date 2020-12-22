@@ -1,5 +1,6 @@
 ﻿using AndoIt.Common.Interface;
 using System;
+using System.Threading;
 
 namespace AndoIt.Common.Common
 {
@@ -14,7 +15,7 @@ namespace AndoIt.Common.Common
 		{
 			this.log = log;
 		}
-		public T Insist<T>(Func<T> func, int retrayes)
+		public T Insist<T>(Func<T> func, int retrayes, int millisecondsDelay = 0)
 		{
 			int tryNumber = 1;
 			Exception exception = null;
@@ -30,6 +31,7 @@ namespace AndoIt.Common.Common
 				{
 					exception = ex;
 					this.log?.Error($"Insister.Insist failed at try number {tryNumber}. Func={func.Target.GetType().Name}.{func.Method.Name}. Retry={tryNumber}", ex);
+					Thread.Sleep(millisecondsDelay);
 				}
 				finally
 				{
@@ -38,7 +40,7 @@ namespace AndoIt.Common.Common
 			} while (exception != null && tryNumber <= retrayes);
 			throw exception;
 		}
-		public void Insist(Action action, int retrayes)
+		public void Insist(Action action, int retrayes, int millisecondsDelay = 0)
 		{
 			int tryNumber = 1;
 			Exception exception = null;
@@ -54,6 +56,7 @@ namespace AndoIt.Common.Common
 				{
 					exception = ex;
 					this.log?.Error($"Insister.Insist failed at try number {tryNumber}. Func={action.Target.GetType().Name}.{action.Method.Name}. Retry={tryNumber}", ex);
+					Thread.Sleep(millisecondsDelay);
 				}
 				finally
 				{

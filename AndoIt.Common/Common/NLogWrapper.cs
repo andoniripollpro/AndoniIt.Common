@@ -32,7 +32,7 @@ namespace AndoIt.Common
 		{
 			this.incidenceEscalator?.Fatal(message, exception, stackTrace);
 			if (stackTrace != null) message = $"{stackTrace.ToStringClassMethod()}: {message}{Environment.NewLine}" 
-					+ $"Params: {ParamsToString(stackTrace.GetFrame(2).GetMethod(), paramValues)}{Environment.NewLine}{stackTrace.ToString()}";
+					+ $"Params: {ParamsToString(stackTrace.GetFrame(0).GetMethod(), paramValues)}{Environment.NewLine}{stackTrace.ToString()}";
 			this.wrappedLog.Fatal(exception, message);			
 		}		
 		public void Error(string message, Exception exception = null, StackTrace stackTrace = null, params object[] paramValues)
@@ -55,7 +55,7 @@ namespace AndoIt.Common
 		public void InfoSafe(string message, StackTrace stackTrace)
 		{
 			message = SafeCleanForbiddenWords(message);
-			this.wrappedLog.Info(message, stackTrace);
+			this.Info(message, stackTrace);
 		}
 		private string SafeCleanForbiddenWords(string message)
 		{

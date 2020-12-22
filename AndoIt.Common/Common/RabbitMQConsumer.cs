@@ -81,8 +81,12 @@ namespace AndoIt.Common.Common
 				var body = ea.Body;
 				correlationId = ea.BasicProperties.CorrelationId;
 				message = Encoding.UTF8.GetString(body);
-
-				this.MessageArrived?.Invoke(this, new Envelope<string>() { Content = message, CorrelationId = ea.BasicProperties.CorrelationId });
+				
+				this.MessageArrived?.Invoke(this, new Envelope<string>() { 
+					Content = message, 
+					CorrelationId = ea.BasicProperties.CorrelationId,
+					ReplyTo = ea.BasicProperties.ReplyTo
+				});
 
 				this.channel.BasicAck(ea.DeliveryTag, false);
 

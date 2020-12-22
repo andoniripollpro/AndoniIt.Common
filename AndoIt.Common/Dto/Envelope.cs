@@ -9,5 +9,6 @@ namespace AndoIt.Common.Dto
 		public Exception Exception { get; set; } = null;
 		public Version Version { get; set; } = null;
 		public string CorrelationId { get; set; } = null;
-	}
+        public string ReplyTo { get; set; }
+    }
 }

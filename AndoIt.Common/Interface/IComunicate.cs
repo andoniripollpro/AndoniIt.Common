@@ -14,6 +14,6 @@ namespace AndoIt.Common.Interface
         void Error(string message, Exception ex);
         void Fatal(string message, StackTrace stackTrace);
         void Fatal(string message, Exception ex);
-        void Warn(string v, Exception e);
+        void Warn(string message, Exception ex);
     }
 }

@@ -29,8 +29,16 @@ namespace AndoIt.Common.Common
 		{
 			this.log = log ?? throw new ArgumentNullException("log");			
 			this.connectionFactory = new ConnectionFactory();
+			this.connectionFactory.AutomaticRecoveryEnabled = true;
+			this.connectionFactory.NetworkRecoveryInterval = TimeSpan.FromSeconds(600); // this.RetryEachSeconds);
+			this.connectionFactory.RequestedHeartbeat = ushort.MaxValue;
+			this.connectionFactory.RequestedConnectionTimeout = int.MaxValue;
+			this.log.Info("this.connectionFactory.AutomaticRecoveryEnabled = true", new StackTrace());
 			this.amqpUrlListen = amqpUrlListen ?? throw new ArgumentNullException("amqpUrlListen");
 		}
+
+		public int InternalRestartRetrays { get; set; } = 10;
+		public int RetryEachSeconds { get; set; } = 900; // 15 min
 
 		public void Listen()
 		{
@@ -44,23 +52,24 @@ namespace AndoIt.Common.Common
 
 				this.connection = this.connectionFactory.CreateConnection();
 				this.connection.ConnectionShutdown += (obj, msg) => ConnectionShutdown(obj, msg);
+				this.connection.RecoverySucceeded += (obj, msg) => RecoverySucceeded(obj, msg);
 				this.connection.ConnectionBlocked += (obj, msg) => ConnectionBlocked(obj, msg);
 
 				this.channel = this.connection.CreateModel();
 				this.channel.ModelShutdown += (obj, msg) => ModelShutdown(obj, msg);
 
-				channel.QueueDeclare(queue: queue,
+				this.channel.QueueDeclare(queue: queue,
 						 durable: true,
 						 exclusive: false,
 						 autoDelete: false,
 						 arguments: null);
 
-				var consumer = new EventingBasicConsumer(channel);
+				var consumer = new EventingBasicConsumer(this.channel);
 				consumer.Received += (model, ea) => { ConsumeMessage(ea); };
 				consumer.ConsumerCancelled += (obj, msg) => { ConsumerCancelled(obj, msg); };
 				consumer.Shutdown += (obj, msg) => { ConsumerShutdown(obj, msg); };
-				consumer.Unregistered += (obj, msg) => { ConsumerUnregistered(obj, msg); };
-				channel.BasicConsume(queue: queue,
+				consumer.Unregistered += (obj, msg) => { ConsumerUnregistered(obj, msg); };				
+				this.channel.BasicConsume(queue: queue,
 										autoAck: false,
 										consumer: consumer);
 			}
@@ -99,22 +108,42 @@ namespace AndoIt.Common.Common
 			}
 		}
 
-		private void ModelShutdown(object obj, ShutdownEventArgs msg)
+		public static string GetCombinedAmqp(string completeAmqp, string toBeInserted, bool queue = true)
 		{
-			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
+			if (toBeInserted.StartsWith("amqp:"))
+			{
+				return toBeInserted;
+			}
+			else
+			{
+				var replyToQuery = HttpUtility.ParseQueryString(new Uri(completeAmqp).Query);
+				replyToQuery.Remove("queue");
+				replyToQuery.Remove("exchange");
+				replyToQuery.Add(queue ? "queue" : "exchange", toBeInserted);
+				string repyToStr = new UriBuilder(completeAmqp) { Query = replyToQuery.ToString() }.ToString();
+				return repyToStr;
+			}
 		}
 
-		private void ConnectionBlocked(object obj, ConnectionBlockedEventArgs msg)
-		{
-			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
+		public static string SwitchAmqpToQueue(string completeAmqp)
+		{			
+			var replyToQuery = HttpUtility.ParseQueryString(new Uri(completeAmqp).Query);
+			string exchage = replyToQuery.Get("exchange");
+			replyToQuery.Remove("exchange");
+			replyToQuery.Add("queue", exchage);
+			string repyToStr = new UriBuilder(completeAmqp) { Query = replyToQuery.ToString() }.ToString();
+			return repyToStr;
+			
 		}
 
 		private void ConnectionShutdown(object obj, ShutdownEventArgs msg)
 		{
-			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
+			this.log.Info($"Sender: {((obj != null) ? GetObjectName(obj) : "null")} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace()); 
+			this.log.Info($"this.connectionFactory.AutomaticRecoveryEnabled = {this.connectionFactory.AutomaticRecoveryEnabled}; this.connectionFactory.NetworkRecoveryInterval = {this.connectionFactory.NetworkRecoveryInterval}", new StackTrace());
+			RecoverIfNeeded();
 		}
 
-		private void ConsumerShutdown(object obj, ShutdownEventArgs msg)
+		private void ModelShutdown(object obj, ShutdownEventArgs msg)
 		{
 			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
 		}
@@ -124,7 +153,28 @@ namespace AndoIt.Common.Common
 			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
 		}
 
+		private void ConsumerShutdown(object obj, ShutdownEventArgs msg)
+		{
+			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
+		}
+
+		//	Hasta aquí serie normal cuando hay desconexión
+		private void ConnectionBlocked(object obj, ConnectionBlockedEventArgs msg)
+		{
+			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
+		}
+
+		private void EventConsumerShutDown(object sender, ShutdownEventArgs e)
+		{
+			this.log.Info($"Sender: {GetObjectName(sender)} Message: {JsonConvert.SerializeObject(e)}", new StackTrace());
+		}
+
 		private void ConsumerUnregistered(object obj, ConsumerEventArgs msg)
+		{
+			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
+		}
+
+		private void RecoverySucceeded(object obj, EventArgs msg)
 		{
 			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
 		}
@@ -143,13 +193,14 @@ namespace AndoIt.Common.Common
 			try
 			{
 				if (!this.DisposingOnPurpouse && this.channel != null)
-				{
-					var internalRestartRetrays = 10;
-					this.log.Info($"InternalRestartRetrays hardcoded: {internalRestartRetrays}", new StackTrace());
-					new Insister(this.log).Insist(new Action(() => InternalRestart()), internalRestartRetrays);
+				{	
+					this.log.Error($"InternalRestartRetrays: {this.InternalRestartRetrays} RetryEachSeconds {this.RetryEachSeconds}", null, new StackTrace());
+					Thread.Sleep(this.RetryEachSeconds * 1000);
+					new Insister(this.log).Insist(new Action(() => InternalRestart()), this.InternalRestartRetrays);
+					//this.log.Info($"Este thread se va a quedar zombi para que no me mate el proceso", new StackTrace());
+					//while (true) Thread.Sleep(int.MaxValue);	//	ZOMBI
 				}
 			}
-
 			catch (Exception ex)
 			{
 				string errorMessage = "Se ha intentado recuperar la conexión con RabbitMQ, pero no se ha podido";
@@ -159,14 +210,11 @@ namespace AndoIt.Common.Common
 		}		
 		private void InternalRestart()
 		{
-			this.log.Error($"this.DisposingOnPurpouse = false", null, new StackTrace());
-
-			var internalRestartSeconds = 60 * 60; // Una hora
-			this.log.Info($"InternalRestartSeconds hardcoded: {internalRestartSeconds}", new StackTrace());
-			Thread.Sleep(internalRestartSeconds * 1000);
-
+			this.log.Info($"CloseConnection(); this.DisposingOnPurpouse = {this.DisposingOnPurpouse}", new StackTrace());						
 			CloseConnection();
 
+			Thread.Sleep(this.RetryEachSeconds * 1000);
+			this.log.Info($"Listen();", new StackTrace());
 			this.Listen();
 		}
 

@@ -11,7 +11,7 @@ namespace AndoIt.Common.Infrastructure
 
         public PipeMapper(IMapper<T1, T2> mapper, IDispenser<T1> dispenser, IProcesser<T2> processer)
         {
-            this.Mapper= mapper ?? throw new ArgumentNullException("mapper");
+            this.Mapper = mapper ?? throw new ArgumentNullException("mapper");
             this.Dispenser = dispenser ?? throw new ArgumentNullException("dispenser");
             this.Processer = processer ?? throw new ArgumentNullException("listener");
 

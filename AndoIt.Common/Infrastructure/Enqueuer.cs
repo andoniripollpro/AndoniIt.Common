@@ -20,9 +20,9 @@ namespace AndoIt.Common.Infrastructure
 		private object toLock = new object();
 
 		public bool Continue { get; set; } = false;
-		public int ConfigTimingSecondsMaxTimerLapse { get; set; } = 600000; //Default cada 10 min
+		int IEnqueuer.ConfigTimingSecondsMaxTimerLapse { get; set; } = 600000; //Default cada 10 min
 		ReadOnlyCollection<IEnqueable> IEnqueuer.Queue => new ReadOnlyCollection<IEnqueable>(this.queue);
-
+		
 		public Enqueuer(ILog log, IEnquerClient client)
 		{			
 			this.log = log ?? throw new ApplicationException("El contenedor de objetos no me da ILog");
@@ -43,19 +43,44 @@ namespace AndoIt.Common.Infrastructure
 			equeablesFromRepositry.ForEach(x => this.Enqueue(x));
 		}
 
-		void IEnqueuer.InsertPetition(object sender, IEnqueable enqueable)
+		void IEnqueuer.InsertTask(object sender, IEnqueable enqueable)
 		{
 			this.log.Debug("Start", new StackTrace());
 			lock (this.toLock)
 			{
 				this.log.Info("Locked", new StackTrace());
-				InsertPetitionInsideLock(enqueable);
+				InsertTaskInsideLock(enqueable);
 				this.log.Debug("Unlocking", new StackTrace());
 			}
 			this.log.Debug("End", new StackTrace());
 		}
-		
-		private void InsertPetitionInsideLock(IEnqueable enqueable)
+
+		void IEnqueuer.ReplyTasksToClient(object sender, IEnqueable toPocess)
+		{
+			this.log.Debug("Start", new StackTrace());
+			lock (this.toLock)
+			{
+				this.client.ReplyList(((IEnqueuer)this).Queue.Where(x => x.Client == toPocess.Client).ToList(), toPocess.ReplyTo);
+			}
+			this.log.Debug("End", new StackTrace());
+		}
+
+		void IEnqueuer.DeleteTasks(object sender, IEnqueable toPocess)
+		{
+			this.log.Debug("Start", new StackTrace());
+			lock (this.toLock)
+			{
+				var toDelete = this.queue.Where(x => x.Id == toPocess.Id).FirstOrDefault();
+				if (toDelete != null)
+				{
+					this.queue.Remove(toPocess);
+					this.log.Info($"Task '{toPocess.Id}' eliminad de la cola.");
+				}
+			}
+			this.log.Debug("End", new StackTrace());
+		}
+
+		private void InsertTaskInsideLock(IEnqueable enqueable)
 		{
 			try
 			{
@@ -140,7 +165,7 @@ namespace AndoIt.Common.Infrastructure
 			//	Calculando el nuevo intervalo para que el timer nos despierte
 			DateTime? nextTime = (this.queue.Count > 0) ? this.queue.Min(x => x.WhenToHandleNext) : (DateTime?) null;
 			var now = DateTime.Now;
-			int millisecondsMaxTimerLapse = 1000 * this.ConfigTimingSecondsMaxTimerLapse;
+			int millisecondsMaxTimerLapse = 1000 * ((IEnqueuer)this).ConfigTimingSecondsMaxTimerLapse;
 			if (nextTime == null)   //	Cola vacía
 				this.timer.Interval = millisecondsMaxTimerLapse;
 			else if (now < nextTime)
@@ -193,12 +218,13 @@ namespace AndoIt.Common.Infrastructure
 			this.Continue = false;
 			this.timer.Stop();
 			this.timer.Dispose();
-		}
+		}		
 	}
 
 	public interface IEnquerClient
 	{
 		void ReplyOk(IEnqueable enqueable);
 		void ReplyError(IEnqueable enqueable, Exception ex, string errorMessage);
+		void ReplyList(List<IEnqueable> enqueable, string replyTo);
 	}
 }

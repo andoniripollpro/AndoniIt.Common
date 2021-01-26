@@ -5,6 +5,7 @@ namespace AndoIt.Common.Interface
 {
     public interface IComunicate
     {
+        ILog Log { get; }
         void Debug(string message, StackTrace stackTrace);
         void Info(string message, string title);
         void Info(string message, StackTrace stackTrace);

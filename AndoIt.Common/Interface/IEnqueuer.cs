@@ -8,7 +8,9 @@ namespace AndoIt.Common.Interface
         ReadOnlyCollection<IEnqueable> Queue { get; }
 		int ConfigTimingSecondsMaxTimerLapse { get; set; }
 		void EnqueuePetitionsFromRepository(List<IEnqueable> equeableFromRepositry);
-		void InsertPetition(object sender, IEnqueable enqueable);
+		void InsertTask(object sender, IEnqueable enqueable);
+		void ReplyTasksToClient(object sender, IEnqueable toPocess);
+		void DeleteTasks(object sender, IEnqueable toPocess);
 		void Process();
 		void Dispose();
 	}	

@@ -4,9 +4,11 @@ namespace AndoIt.Common.Interface
 {
     public abstract class IEnqueable : IEquatable<IEnqueable>
     {
+        public abstract string Client { get; set; }
         public abstract string Id { get; }
         public abstract DateTime WhenToHandleNext { get; }
         public EnqueableState State { get; protected set; } = EnqueableState.Pending;
+        public abstract string ReplyTo { get; set; }
 
         public abstract void Handle();
         public bool Equals(IEnqueable enqueable)

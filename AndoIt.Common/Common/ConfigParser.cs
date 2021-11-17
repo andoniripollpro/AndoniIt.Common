@@ -28,7 +28,7 @@ namespace AndoIt.Common.Common
                 throw new ConfigurationErrorsException($"No existe, o no está bien expresado (int), el valor con tagAddress '{tagAddress}' en la configuración", ex);
             }
         }
-        public string GetAsString(string tagAddress)
+        public string GetAsString(string tagAddress, string defaultValue = null)
         {
             try
             {
@@ -36,7 +36,10 @@ namespace AndoIt.Common.Common
             }
             catch (Exception ex)
             {
-                throw new ConfigurationErrorsException($"No existe, o no está bien expresado (string), el valor con tagAddress '{tagAddress}' en la configuración", ex);
+                if (defaultValue is null)
+                    throw new ConfigurationErrorsException($"No existe, o no está bien expresado (string), el valor con tagAddress '{tagAddress}' en la configuración", ex);
+                else
+                    return defaultValue;
             }
         }
         public bool GetAsBool(string tagAddress)

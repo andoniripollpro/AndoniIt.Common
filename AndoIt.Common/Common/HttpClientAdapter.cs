@@ -38,25 +38,19 @@ namespace AndoIt.Common
 		{
 			this.logListener?.Message($"Antes del POST {url}. Credentials: {credentials?.UserName} Body: {body}");
 
-			using (var webApiClient = this.GetDisposableHttpClient(url, credentials))
-			{
-				StringContent content = new StringContent(body);
-				content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-				var responseMessage = webApiClient.PostAsync(string.Empty, content).Result;
-				string responseExplanation = $"Response.StatusCode = {(int)responseMessage.StatusCode}; {responseMessage.ReasonPhrase.ToString()}";
-				string responseBody = responseMessage.Content.ReadAsStringAsync().Result;
-				this.logListener?.Message(responseExplanation);
-				if (!responseMessage.IsSuccessStatusCode)
-					throw new Exception($"{responseExplanation}. Body: {responseBody}");
-				return responseBody;
-			}
+			var responseMessage = this.StandardPost(url, body, credentials);
+			if (!responseMessage.IsSuccessStatusCode)
+				throw new Exception($"HttpClientAdapter.AllCookedUpPost Response.StatusCode = {(int)responseMessage.StatusCode}: {responseMessage.ReasonPhrase.ToString()}");
+			string response = responseMessage.Content.ReadAsStringAsync().Result;
+			return response;
+
 		}
 		public string AllCookedUpSoap(string url, string body, NetworkCredential credentials = null)
 		{
 			this.logListener?.Message($"Antes del POST SOAP {url}. Credentials: {credentials?.UserName} Body: {body}");
 
-			using (var webApiClient = this.GetDisposableHttpClient(url, credentials))
-			{
+			using (var webApiClient = this.GetDisposableHttpClient(url, credentials, "application/xml"))
+			{	
 				webApiClient.DefaultRequestHeaders.Add("SOAPAction", url);
 				var content = new StringContent(body, Encoding.UTF8, "text/xml");
 
@@ -78,7 +72,7 @@ namespace AndoIt.Common
 			return result;
 		}
 
-		public HttpClient GetDisposableHttpClient(string url, NetworkCredential credentials = null)
+		public HttpClient GetDisposableHttpClient(string url, NetworkCredential credentials = null, string mediaTypeHeaderValue = null)
         {
             HttpClientHandler handler;
             if (credentials == null)
@@ -97,11 +91,15 @@ namespace AndoIt.Common
 			};
 
 			client.DefaultRequestHeaders.UserAgent.TryParseAdd(Assembly.GetExecutingAssembly().GetName().Name);
+			if (mediaTypeHeaderValue == null)
+				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+			else
+				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaTypeHeaderValue));
 
 			if (credentials != null)
 			{
 				var encoding = Encoding.GetEncoding("iso-8859-1");
-				string usuPassString = $"{credentials.UserName}:{credentials.Password}";
+				string usuPassString = $"{credentials?.UserName}:{credentials?.Password}";
 				byte[] bytes = Encoding.UTF8.GetBytes(usuPassString);
 				string oauthToken = Convert.ToBase64String(bytes);
 				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", oauthToken);
@@ -118,21 +116,31 @@ namespace AndoIt.Common
 
 		public string AllCookedUpDelete(string url, string urn, NetworkCredential credentials = null)
 		{
-			this.logListener?.Message($"Antes del DELETE {url}. Credentials: {credentials.UserName}. Deleted file: {urn}");
+			this.logListener?.Message($"Antes del DELETE {url}. Credentials: {credentials?.UserName}. Deleted file: {urn}");
 			string response = "ERROR";
+
+			var responseMessage = StandardDelete(url, urn, credentials);
+
+			response = responseMessage.Content.ReadAsStringAsync().Result;
+
+			return response;			
+		}
+
+		public HttpResponseMessage StandardDelete(string url, string urn, NetworkCredential credentials = null)
+		{
+			this.logListener?.Message($"Antes del DELETE {url}. Credentials: {credentials?.UserName}. Deleted file: {urn}");
 
 			using (var webApiClient = this.GetDisposableHttpClient(url, credentials))
 			{
 				var responseMessage = webApiClient.DeleteAsync(urn).Result;
 				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
-				response = responseMessage.Content.ReadAsStringAsync().Result;
+				return responseMessage;
 			}
-			return response;
 		}
 
 		public void AllCookedUpPatch(string url, string body, NetworkCredential credentials = null)
 		{
-			this.logListener?.Message($"Antes del PATCH {url}. Credentials: {credentials.UserName}. Body: {body}");
+			this.logListener?.Message($"Antes del PATCH {url}. Credentials: {credentials?.UserName}. Body: {body}");
 
 			HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
 			httpWebRequest.ContentType = "application/json";
@@ -158,7 +166,7 @@ namespace AndoIt.Common
                 wepApiClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Basic", Convert.ToBase64String(
                         ASCIIEncoding.ASCII.GetBytes(
-                        $"{credentials.UserName}:{credentials.Password}")));
+                        $"{credentials?.UserName}:{credentials?.Password}")));
             }
         }
 
@@ -174,9 +182,10 @@ namespace AndoIt.Common
             
             return response;
         }
+
 		public HttpResponseMessage StandardPut(string url, object body, NetworkCredential credentials = null)
 		{
-			this.logListener?.Message($"Antes del PUT {url}. Credentials: {credentials.UserName} Body: {body}");
+			this.logListener?.Message($"Antes del PUT {url}. Credentials: {credentials?.UserName} Body: {body}");
 			HttpResponseMessage responseMessage;
 
 			using (var wepApiClient = this.GetDisposableHttpClient(url, credentials))
@@ -205,7 +214,7 @@ namespace AndoIt.Common
 			
 			FromFileToStream(completeFileAddress, httpWebRequest.GetRequestStream());
 
-			this.logListener?.Message($"Antes del PUT(UploadFile) {url}. Credentials: {credentials.UserName} File: {completeFileAddress}");
+			this.logListener?.Message($"Antes del PUT(UploadFile) {url}. Credentials: {credentials?.UserName} File: {completeFileAddress}");
 			using (WebResponse wresp = httpWebRequest.GetResponse())
 			{
 				this.logListener?.Message($"Response.StatusCode = {(int)((HttpWebResponse)wresp).StatusCode}");
@@ -226,7 +235,7 @@ namespace AndoIt.Common
 
 			FromFileToStream(completeFileAddress, httpWebRequest.GetRequestStream());
 
-			this.logListener?.Message($"Antes del PUT(UploadFile) {url}. Credentials: {credentials.UserName} File: {completeFileAddress}");
+			this.logListener?.Message($"Antes del PUT(UploadFile) {url}. Credentials: {credentials?.UserName} File: {completeFileAddress}");
 			using (WebResponse wresp = httpWebRequest.GetResponse())
 			{
 				this.logListener?.Message($"Response.StatusCode = {(int)((HttpWebResponse)wresp).StatusCode}");
@@ -250,7 +259,7 @@ namespace AndoIt.Common
 
 		public HttpResponseMessage StandardGet(string url, NetworkCredential credentials = null)
 		{
-			this.logListener?.Message($"Antes del GET {url}. Credentials: {credentials.UserName}");
+			this.logListener?.Message($"Antes del GET {url}. Credentials: {credentials?.UserName}");
 			HttpResponseMessage responseMessage;
 
 			using (var wepApiClient = this.GetDisposableHttpClient(url, credentials))
@@ -261,9 +270,25 @@ namespace AndoIt.Common
 			return responseMessage;
 		}
 
+		public HttpResponseMessage StandardPost(string url, string body, NetworkCredential credentials = null)
+		{
+			this.logListener?.Message($"Antes del POST {url}. Credentials: {credentials?.UserName} Body: {body}");
+
+			using (var webApiClient = this.GetDisposableHttpClient(url, credentials))
+			{
+				StringContent content = new StringContent(body);
+				content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+				var responseMessage = webApiClient.PostAsync(string.Empty, content).Result;
+				string responseExplanation = $"Response.StatusCode = {(int)responseMessage.StatusCode}; {responseMessage.ReasonPhrase.ToString()}";
+				string responseBody = responseMessage.Content.ReadAsStringAsync().Result;
+				this.logListener?.Message(responseExplanation);				
+				return responseMessage;
+			}
+		}
+
 		public string AllCookedUpGet(string url, NetworkCredential credentials = null)
         {
-			this.logListener?.Message($"Antes del GET {url}. Credentials: {credentials.UserName}");
+			this.logListener?.Message($"Antes del GET {url}. Credentials: {credentials?.UserName}");
 			string response = "ERROR";
 
 			var responseMessage = this.StandardGet(url, credentials);
@@ -276,7 +301,7 @@ namespace AndoIt.Common
 
         public T AllCookedUpGet<T>(string url, NetworkCredential credentials = null)
         {
-			this.logListener?.Message($"Antes del GET {url}. Credentials: {credentials.UserName}");
+			this.logListener?.Message($"Antes del GET {url}. Credentials: {credentials?.UserName}");
 
 			using (var wepApiClient = this.GetDisposableHttpClient(url, credentials))
             {

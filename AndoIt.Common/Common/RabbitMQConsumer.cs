@@ -30,7 +30,7 @@ namespace AndoIt.Common.Common
 			this.log = log ?? throw new ArgumentNullException("log");			
 			this.connectionFactory = new ConnectionFactory();
 			this.connectionFactory.AutomaticRecoveryEnabled = true;
-			this.connectionFactory.NetworkRecoveryInterval = TimeSpan.FromSeconds(600); // this.RetryEachSeconds);
+			this.connectionFactory.NetworkRecoveryInterval = TimeSpan.FromSeconds(this.RetryEachSeconds);
 			this.connectionFactory.RequestedHeartbeat = ushort.MaxValue;
 			this.connectionFactory.RequestedConnectionTimeout = int.MaxValue;
 			this.log.Info("this.connectionFactory.AutomaticRecoveryEnabled = true", new StackTrace());
@@ -39,6 +39,7 @@ namespace AndoIt.Common.Common
 
 		public int InternalRestartRetrays { get; set; } = 10;
 		public int RetryEachSeconds { get; set; } = 900; // 15 min
+		public bool ErrorFatalEventOnFirstFail { get; set; } = false;
 
 		public void Listen()
 		{
@@ -150,7 +151,9 @@ namespace AndoIt.Common.Common
 
 		private void ConsumerCancelled(object obj, ConsumerEventArgs msg)
 		{
-			this.log.Info($"Sender: {GetObjectName(obj)} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
+			this.log.Info($"Sender: {((obj != null) ? GetObjectName(obj) : "null")} Message: {JsonConvert.SerializeObject(msg)}", new StackTrace());
+			this.log.Info($"this.connectionFactory.AutomaticRecoveryEnabled = {this.connectionFactory.AutomaticRecoveryEnabled}; this.connectionFactory.NetworkRecoveryInterval = {this.connectionFactory.NetworkRecoveryInterval}", new StackTrace());
+			RecoverIfNeeded();
 		}
 
 		private void ConsumerShutdown(object obj, ShutdownEventArgs msg)
@@ -193,8 +196,10 @@ namespace AndoIt.Common.Common
 			try
 			{
 				if (!this.DisposingOnPurpouse && this.channel != null)
-				{	
+				{
 					this.log.Error($"InternalRestartRetrays: {this.InternalRestartRetrays} RetryEachSeconds {this.RetryEachSeconds}", null, new StackTrace());
+					if (this.ErrorFatalEventOnFirstFail)
+						this?.ErrorFatalEvent(this, new Envelope<string>() { Content = "Está intentando recuperarse, pero va a pedir reiniciar el servicio" });
 					Thread.Sleep(this.RetryEachSeconds * 1000);
 					new Insister(this.log).Insist(new Action(() => InternalRestart()), this.InternalRestartRetrays);
 					//this.log.Info($"Este thread se va a quedar zombi para que no me mate el proceso", new StackTrace());
@@ -220,6 +225,7 @@ namespace AndoIt.Common.Common
 
 		public void Dispose()
 		{
+			this.log.Info($"Start", new StackTrace());
 			this.DisposingOnPurpouse = true;
 			CloseConnection();
 
@@ -228,11 +234,13 @@ namespace AndoIt.Common.Common
 
 		private void CloseConnection()
 		{
+			this.log.Info($"Start", new StackTrace());
 			this.channel?.Close();
 			this.connection?.Close();
 			this.channel = null;
 			this.connection = null;
 			GC.Collect();
+			this.log.Info($"End", new StackTrace());
 		}
 	}
 }

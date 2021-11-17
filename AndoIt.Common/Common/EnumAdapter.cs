@@ -2,10 +2,6 @@
 using System.ComponentModel;
 using System.Reflection;
 
-/// <remarks>
-/// Este assembly sobra; metámoslo en AndoIt.DaypartSaver.Domain.Model.
-/// Hecho
-/// </remarks>
 namespace AndoIt.Common
 {
     public class EnumAdapter<T> where T : struct

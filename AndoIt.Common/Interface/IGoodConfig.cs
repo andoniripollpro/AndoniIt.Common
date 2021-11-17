@@ -8,7 +8,7 @@ namespace AndoIt.Common.Interface
 	{
 		string ConnectionString { get; }
 
-		string GetAsString(string tagAddress);
+		string GetAsString(string tagAddress, string defaultValue = null);
 		int GetAsInt(string tagAddress);
 		List<string> GetAsStringList(string tagAddress, char separator = ',');
 

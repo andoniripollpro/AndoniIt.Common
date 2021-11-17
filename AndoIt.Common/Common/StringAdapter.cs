@@ -55,6 +55,7 @@ namespace AndoIt.Common
 
         public static string SubStringTruncated(this string extended, string startWord, string endWord = null)
         {
+            if (string.IsNullOrWhiteSpace(startWord)) startWord = string.Empty;
             int startIndex = extended.Contains(startWord) ? extended.IndexOf(startWord) + startWord.Length : 0;
             int resultLength = (endWord == null || !extended.Contains(endWord))
                 ? int.MaxValue : extended.IndexOf(endWord) - startIndex;

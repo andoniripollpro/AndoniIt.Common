@@ -11,7 +11,7 @@ namespace AndoIt.Common
 		private readonly Interface.ILog incidenceEscalator;
 		public readonly List<string> forbiddenWords = new List<string>();
 
-		public const string APP_NAME = "ServicioDaypartSaver";
+		public const string APP_NAME = "ServicioLiveToFile";
 
 		public string FORBIDDEN_WORD_CHARACTERS = "XXXXXXXXXXXXXXXXXXXX";
 

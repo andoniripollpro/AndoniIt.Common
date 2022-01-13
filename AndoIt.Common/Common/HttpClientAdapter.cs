@@ -14,8 +14,8 @@ namespace AndoIt.Common
     {
 		public delegate void Log(string message);		
 
-		private readonly HttpClientAdapter.ILog logListener;
-		private readonly int? timeoutSeconds = null;
+		protected readonly HttpClientAdapter.ILog logListener;
+		protected readonly int? timeoutSeconds = null;
 
 		public HttpClientAdapter(HttpClientAdapter.ILog logListener = null, int? timeoutSeconds = null)
 		{
@@ -72,7 +72,7 @@ namespace AndoIt.Common
 			return result;
 		}
 
-		public HttpClient GetDisposableHttpClient(string url, NetworkCredential credentials = null, string mediaTypeHeaderValue = null)
+		public virtual HttpClient GetDisposableHttpClient(string url, NetworkCredential credentials = null, string mediaTypeHeaderValue = null)
         {
             HttpClientHandler handler;
             if (credentials == null)

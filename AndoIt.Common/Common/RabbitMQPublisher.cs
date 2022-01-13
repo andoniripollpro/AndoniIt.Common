@@ -66,7 +66,7 @@ namespace AndoIt.Common.Common
 
 					byte[] payload = Encoding.UTF8.GetBytes(datosPublicacion);
 					channel.BasicPublish(exchangeName, routingKey, properties, payload);
-					this.log.Info($"channel.BasicPublish({exchangeName}, {routingKey}, {properties}, {payload})", new StackTrace());
+					this.log.Debug($"channel.BasicPublish({exchangeName}, {routingKey}, {properties}, {payload})", new StackTrace());
 				}
 			}
 		}

@@ -127,8 +127,8 @@ namespace AndoIt.Common
 				else
 					throw;
 			}
-			this.log.Info($"url: {url}", new StackTrace());
-			this.log.Info($"Esta es la configuración leída de la BD: {Environment.NewLine}{configurationInJson}", new StackTrace());
+			this.log.Debug($"url: {url}", new StackTrace());
+			this.log.Debug($"Esta es la configuración leída de la BD: {Environment.NewLine}{configurationInJson}", new StackTrace());
 		}
 	}
 }

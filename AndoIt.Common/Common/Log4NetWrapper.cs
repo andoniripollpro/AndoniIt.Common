@@ -53,6 +53,11 @@ namespace AndoIt.Common
 			message = SafeCleanForbiddenWords(message);
 			this.wrappedLog.Info(message);
 		}
+		public void DebugSafe(string message, StackTrace stackTrace)
+		{
+			message = SafeCleanForbiddenWords(message);
+			this.wrappedLog.Debug(message);
+		}
 		private string SafeCleanForbiddenWords(string message)
 		{
 			this.forbiddenWords.ForEach(x => message = message.Replace(x, FORBIDDEN_WORD_CHARACTERS));
@@ -82,5 +87,5 @@ namespace AndoIt.Common
 			msg += ")";
 			return string.Format(msg, namevalues);
 		}
-	}
+    }
 }

@@ -25,7 +25,6 @@ namespace AndoIt.Common
 
 		public T AllCookedUpPost<T>(string url, object body, NetworkCredential credentials = null)
         {
-
 			string resultStr = AllCookedUpPost(url, JsonConvert.SerializeObject(body), credentials);
 			T resultT = JsonConvert.DeserializeObject<T>(resultStr);
 			return resultT;
@@ -40,7 +39,7 @@ namespace AndoIt.Common
 
 			var responseMessage = this.StandardPost(url, body, credentials);
 			if (!responseMessage.IsSuccessStatusCode)
-				throw new Exception($"HttpClientAdapter.AllCookedUpPost Response.StatusCode = {(int)responseMessage.StatusCode}: {responseMessage.ReasonPhrase.ToString()}");
+				throw new Exception(ResponseToString(responseMessage));
 			string response = responseMessage.Content.ReadAsStringAsync().Result;
 			return response;
 
@@ -55,9 +54,9 @@ namespace AndoIt.Common
 				var content = new StringContent(body, Encoding.UTF8, "text/xml");
 
 				var responseMessage = webApiClient.PostAsync(url, content).Result;
-				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
+				this.logListener?.Message(ResponseToString(responseMessage));
 				if (!responseMessage.IsSuccessStatusCode)
-					throw new Exception(responseMessage.ReasonPhrase.ToString());
+					throw new Exception(ResponseToString(responseMessage));
 				return ExtractFromTaskWithEncoding(responseMessage.Content).Result;
 			}
 		}
@@ -133,7 +132,7 @@ namespace AndoIt.Common
 			using (var webApiClient = this.GetDisposableHttpClient(url, credentials))
 			{
 				var responseMessage = webApiClient.DeleteAsync(urn).Result;
-				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
+				this.logListener?.Message(ResponseToString(responseMessage));
 				return responseMessage;
 			}
 		}
@@ -175,9 +174,9 @@ namespace AndoIt.Common
 			string response = "ERROR";
 
 			var responseMessage = this.StandardPut(url, body, credentials);
-			this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
+			this.logListener?.Message(ResponseToString(responseMessage));
 			if (!responseMessage.IsSuccessStatusCode)
-                throw new Exception(responseMessage.ReasonPhrase.ToString());			
+                throw new Exception(ResponseToString(responseMessage));			
 			response = $"StatusCode: {responseMessage.StatusCode}, Status: {responseMessage.ReasonPhrase}, Body: {responseMessage.Content.ReadAsStringAsync().Result}";
             
             return response;
@@ -265,7 +264,7 @@ namespace AndoIt.Common
 			using (var wepApiClient = this.GetDisposableHttpClient(url, credentials))
 			{
 				responseMessage = wepApiClient.GetAsync(string.Empty).Result;
-				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
+				this.logListener?.Message(ResponseToString(responseMessage));
 			}
 			return responseMessage;
 		}
@@ -279,36 +278,40 @@ namespace AndoIt.Common
 				StringContent content = new StringContent(body);
 				content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 				var responseMessage = webApiClient.PostAsync(string.Empty, content).Result;
-				string responseExplanation = $"Response.StatusCode = {(int)responseMessage.StatusCode}; {responseMessage.ReasonPhrase.ToString()}";
 				string responseBody = responseMessage.Content.ReadAsStringAsync().Result;
-				this.logListener?.Message(responseExplanation);				
+				this.logListener?.Message(ResponseToString(responseMessage));				
 				return responseMessage;
 			}
 		}
 
 		public string AllCookedUpGet(string url, NetworkCredential credentials = null)
-        {
+		{
 			this.logListener?.Message($"Antes del GET {url}. Credentials: {credentials?.UserName}");
 			string response = "ERROR";
 
 			var responseMessage = this.StandardGet(url, credentials);
-            if (!responseMessage.IsSuccessStatusCode)
-                throw new Exception($"HttpClientAdapter.AllCookedUpGet Response.StatusCode = {(int)responseMessage.StatusCode}: {responseMessage.ReasonPhrase.ToString()}");
-            response = responseMessage.Content.ReadAsStringAsync().Result;
-			
-            return response;
-        }
+			if (!responseMessage.IsSuccessStatusCode)
+				throw new Exception(ResponseToString(responseMessage));
+			response = responseMessage.Content.ReadAsStringAsync().Result;
 
-        public T AllCookedUpGet<T>(string url, NetworkCredential credentials = null)
+			return response;
+		}
+
+		private static string ResponseToString(HttpResponseMessage responseMessage)
+		{
+			return $"ReasonPhrase = '{responseMessage.ReasonPhrase.ToString()}'. StatusCode={(int)responseMessage.StatusCode}. Headers = '{responseMessage.Headers}'. Content = '{JsonConvert.SerializeObject(responseMessage.Content)}'";
+		}
+
+		public T AllCookedUpGet<T>(string url, NetworkCredential credentials = null)
         {
 			this.logListener?.Message($"Antes del GET {url}. Credentials: {credentials?.UserName}");
 
 			using (var wepApiClient = this.GetDisposableHttpClient(url, credentials))
             {
 				var responseMessage = wepApiClient.GetAsync(string.Empty).Result;
-				this.logListener?.Message($"Response.StatusCode = {(int)responseMessage.StatusCode}");
+				this.logListener?.Message(ResponseToString(responseMessage));
 				if (!responseMessage.IsSuccessStatusCode)
-                    throw new Exception($"StatusCode: {responseMessage.StatusCode}, Status: {responseMessage.ReasonPhrase}");
+                    throw new Exception(ResponseToString(responseMessage));
 				var response = JsonConvert.DeserializeObject<T>(responseMessage.Content.ReadAsStringAsync().Result);
 				return response;
             }

@@ -105,6 +105,7 @@
     <Compile Include="Common\IoCObjectContainer.cs" />
     <Compile Include="Common\IoWrapper.cs" />
     <Compile Include="Common\JsonExtender.cs" />
+    <Compile Include="Common\LogConsoleWrapper.cs" />
     <Compile Include="Common\RandomExtension.cs" />
     <Compile Include="Common\SmtpMailSender.cs" />
     <Compile Include="Common\UserImpersonator.cs" />

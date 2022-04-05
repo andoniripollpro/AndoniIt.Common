@@ -57,9 +57,11 @@ namespace AndoIt.Common
         {
             if (string.IsNullOrWhiteSpace(startWord)) startWord = string.Empty;
             int startIndex = extended.Contains(startWord) ? extended.IndexOf(startWord) + startWord.Length : 0;
-            int resultLength = (endWord == null || !extended.Contains(endWord))
-                ? int.MaxValue : extended.IndexOf(endWord) - startIndex;
-            return extended.SubStringTruncated(startIndex, resultLength);
+            // OJO: No he hecho el test unitario
+            string onProcess = extended.SubStringTruncated(startIndex);
+            int resultLength = (endWord == null || !onProcess.Contains(endWord))
+                ? int.MaxValue : extended.IndexOf(endWord);
+            return onProcess.SubStringTruncated(0, resultLength);
         }
 
         public static string FromCamelCaseToPhrase(this string extended)

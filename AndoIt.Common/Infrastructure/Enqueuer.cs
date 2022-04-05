@@ -110,7 +110,7 @@ namespace AndoIt.Common.Infrastructure
 			else
 				this.queue.Insert(this.queue.IndexOf(insertBeforeThis), enqueable);
 
-			this.log.InfoSafe($"{enqueable.Id} insertado en la cola:{Environment.NewLine}{enqueable.ToString()}", new StackTrace());
+			this.log.InfoSafe($"{enqueable.Id} insertado en la cola:{Environment.NewLine}{enqueable.Id} {enqueable.State.ToString()} a las {enqueable.WhenToHandleNext}{Environment.NewLine}{enqueable.ToString()}", new StackTrace());
 		}
 
 		void IEnqueuer.Process()

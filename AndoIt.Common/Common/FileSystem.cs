@@ -29,5 +29,12 @@ namespace AndoIt.Common
 
             return lastDatetimeModified;
         }
+
+        public static void WriteAllTextSafe(string fileCompletePath, string fileContent)
+        {
+            if (!Directory.Exists(Path.GetDirectoryName(fileCompletePath))) 
+                Directory.CreateDirectory(Path.GetDirectoryName(fileCompletePath));
+            File.WriteAllText(fileCompletePath, fileContent);
+        }
     }    
 }

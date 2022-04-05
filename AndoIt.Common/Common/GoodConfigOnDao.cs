@@ -35,7 +35,7 @@ namespace AndoIt.Common
 			this.log = this.ioCObjectContainer.Get<ILog>();
 			this.configurationInJson = new Insister(this.log).Insist<string>(() => GetRootJStringFromDB() , 2);
 			this.dataBaseLastRead = DateTime.Now;
-			this.WriteConfigSafeToLog();			
+			this.WriteConfigSafeToLog();
 		}
 
 		public ILog Log => log;

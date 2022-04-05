@@ -200,6 +200,24 @@ namespace AndoIt.Common
 			string strResult = AllCookedUpPut(url, body, credentials);
 			return JsonConvert.DeserializeObject<T>(strResult);
 		}
+		public WebResponse StandardPatch(string url, object body, NetworkCredential credentials = null)
+		{
+			this.logListener?.Message($" Patching{body} to {url}");
+
+			HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+			httpWebRequest.ContentType = "application/json";
+			httpWebRequest.Method = "PATCH";
+			httpWebRequest.KeepAlive = true;
+			httpWebRequest.Credentials = credentials ?? CredentialCache.DefaultCredentials;
+
+			this.logListener?.Message($"Antes del PATCH {url}. Credentials: {credentials?.UserName} Body: {body}");
+			using (WebResponse wresp = httpWebRequest.GetResponse())
+			{
+				this.logListener?.Message($"Response.StatusCode = {(int)((HttpWebResponse)wresp).StatusCode}");
+				httpWebRequest = null;
+				return wresp;
+			};
+		}
 
 		public void AllCookedUpUploadFile(string url, string completeFileAddress, NetworkCredential credentials = null)
 		{
@@ -264,7 +282,7 @@ namespace AndoIt.Common
 			using (var wepApiClient = this.GetDisposableHttpClient(url, credentials))
 			{
 				responseMessage = wepApiClient.GetAsync(string.Empty).Result;
-				this.logListener?.Message(ResponseToString(responseMessage));
+				this.logListener?.Message($"Response: '{ResponseToString(responseMessage)}'");
 			}
 			return responseMessage;
 		}

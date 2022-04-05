@@ -12,7 +12,7 @@ namespace AndoIt.Publicador.Common.Test.Unit
 	public class EnqueuerTest
     {
 		[TestMethod]
-		public void InsertTask_DueInPast_Haldeled()
+		public void InsertTask_DueOnPast_Haldeled()
         {
 			//  Arrange
 			var helper = new TestsHelper();			
@@ -30,7 +30,7 @@ namespace AndoIt.Publicador.Common.Test.Unit
 		}
 
 		[TestMethod]
-		public void InsertTask_DueInFutire_NotHaldeled()
+		public void InsertTask_DueOnFuture_NotHaldeled()
 		{
 			//  Arrange
 			var helper = new TestsHelper();

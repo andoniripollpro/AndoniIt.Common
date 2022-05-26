@@ -9,6 +9,7 @@ namespace AndoIt.Common.Interface
         public abstract DateTime WhenToHandleNext { get; }
         public EnqueableState State { get; protected set; } = EnqueableState.Pending;
         public abstract string ReplyTo { get; set; }
+        public bool DeletedFromQueue { get; set; } = false;
 
         public abstract void Handle();
         public bool Equals(IEnqueable enqueable)

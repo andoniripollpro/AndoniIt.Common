@@ -14,7 +14,7 @@ namespace AndoIt.Common.Infrastructure
 	public class Enqueuer : IEnqueuer
 	{		
 		private readonly ILog log;
-		private readonly IEnquerClient client;
+		private readonly IEnqueuerClient client;
 		private readonly Timer timer;
 		private readonly List<IEnqueable> queue;
 		private object toLock = new object();
@@ -23,7 +23,7 @@ namespace AndoIt.Common.Infrastructure
 		int IEnqueuer.ConfigTimingSecondsMaxTimerLapse { get; set; } = 600000; //Default cada 10 min
 		ReadOnlyCollection<IEnqueable> IEnqueuer.Queue => new ReadOnlyCollection<IEnqueable>(this.queue);
 		
-		public Enqueuer(ILog log, IEnquerClient client)
+		public Enqueuer(ILog log, IEnqueuerClient client)
 		{			
 			this.log = log ?? throw new ApplicationException("El contenedor de objetos no me da ILog");
 			this.log.Info("Start", new StackTrace());
@@ -74,9 +74,11 @@ namespace AndoIt.Common.Infrastructure
 				if (toDelete != null)
 				{
 					this.queue.Remove(toPocess);
-					this.log.Info($"Task '{toPocess.Id}' eliminad de la cola.");
+					toDelete.DeletedFromQueue = true;
+					this.log.Info($"Task '{toPocess.Id}' eliminado de la cola.");
+					this.client.Persist(toDelete);
 				}
-			}
+			}			
 			this.log.Debug("End", new StackTrace());
 		}
 
@@ -92,6 +94,7 @@ namespace AndoIt.Common.Infrastructure
 				}
 
 				this.Enqueue(enqueable);
+				this.client.Persist(enqueable);
 								
 				OnTimerElapsedInsideLock();			
 			}
@@ -208,6 +211,7 @@ namespace AndoIt.Common.Infrastructure
 			}
 			finally
 			{
+				this.client.Persist(enqueable);
 				this.log.Info($"Petición {enqueable.Id} Handled");
 			}
 		}
@@ -221,10 +225,11 @@ namespace AndoIt.Common.Infrastructure
 		}		
 	}
 
-	public interface IEnquerClient
+	public interface IEnqueuerClient
 	{
 		void ReplyOk(IEnqueable enqueable);
 		void ReplyError(IEnqueable enqueable, Exception ex, string errorMessage);
 		void ReplyList(List<IEnqueable> enqueable, string replyTo);
+		void Persist(IEnqueable enqueable);
 	}
 }

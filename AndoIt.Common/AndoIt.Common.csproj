@@ -108,8 +108,10 @@
     <Compile Include="Common\RandomExtension.cs" />
     <Compile Include="Common\SmtpMailSender.cs" />
     <Compile Include="Common\UserImpersonator.cs" />
+    <Compile Include="Infrastructure\AppStateDao.cs" />
     <Compile Include="Infrastructure\Enqueuer.cs" />
     <Compile Include="Infrastructure\IIoWrapper.cs" />
+    <Compile Include="Infrastructure\OracleDynamicParameters.cs" />
     <Compile Include="Infrastructure\PipeMapper.cs" />
     <Compile Include="Interface\IDispenser.cs" />
     <Compile Include="Interface\IEnqueable.cs" />

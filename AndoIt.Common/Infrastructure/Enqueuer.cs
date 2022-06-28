@@ -107,13 +107,13 @@ namespace AndoIt.Common.Infrastructure
 				
 		private void Enqueue(IEnqueable enqueable)
 		{
-			var insertBeforeThis = this.queue.FirstOrDefault(x => x.WhenToHandleNext > enqueable.WhenToHandleNext);
+			var insertBeforeThis = this.queue.FirstOrDefault(x => x.WhenToHandleNextUtc > enqueable.WhenToHandleNextUtc);
 			if (insertBeforeThis == null)
 				this.queue.Add(enqueable);
 			else
 				this.queue.Insert(this.queue.IndexOf(insertBeforeThis), enqueable);
 
-			this.log.InfoSafe($"{enqueable.Id} insertado en la cola:{Environment.NewLine}{enqueable.Id} {enqueable.State.ToString()} a las {enqueable.WhenToHandleNext}{Environment.NewLine}{enqueable.ToString()}", new StackTrace());
+			this.log.InfoSafe($"{enqueable.Id} insertado en la cola:{Environment.NewLine}{enqueable.Id} {enqueable.State.ToString()} a las {enqueable.WhenToHandleNextUtc} UTC{Environment.NewLine}{enqueable.ToString()}", new StackTrace());
 		}
 
 		void IEnqueuer.Process()
@@ -159,21 +159,21 @@ namespace AndoIt.Common.Infrastructure
 		private List<IEnqueable> GetListToHandle()
 		{
 			//	Procesando (Handle) las peticiones cuyo momento ha llegado
-			var listToProcess = this.queue.Where(x => x.WhenToHandleNext <= DateTime.Now).ToList();
+			var listToProcess = this.queue.Where(x => x.WhenToHandleNextUtc <= DateTime.Now.ToUniversalTime()).ToList();
 			return listToProcess;
 		}
 
 		private void SetTimerInterval()
 		{
 			//	Calculando el nuevo intervalo para que el timer nos despierte
-			DateTime? nextTime = (this.queue.Count > 0) ? this.queue.Min(x => x.WhenToHandleNext) : (DateTime?) null;
-			var now = DateTime.Now;
+			DateTime? nextTime = (this.queue.Count > 0) ? this.queue.Min(x => x.WhenToHandleNextUtc) : (DateTime?) null;
+			var now = DateTime.UtcNow;
 			int millisecondsMaxTimerLapse = 1000 * ((IEnqueuer)this).ConfigTimingSecondsMaxTimerLapse;
 			if (nextTime == null)   //	Cola vacía
 				this.timer.Interval = millisecondsMaxTimerLapse;
 			else if (now < nextTime)
 			{
-				this.timer.Interval = (nextTime.Value - now).TotalMilliseconds;   //	Milisegundos para el siguente lapso
+				this.timer.Interval = Math.Min((nextTime.Value - now).TotalMilliseconds, Int32.MaxValue);   //	Milisegundos para el siguente lapso
 				if (this.timer.Interval > millisecondsMaxTimerLapse)
 					this.timer.Interval = millisecondsMaxTimerLapse;
 			}

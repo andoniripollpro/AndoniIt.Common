@@ -6,7 +6,7 @@ namespace AndoIt.Common.Interface
     {
         public abstract string Client { get; set; }
         public abstract string Id { get; }
-        public abstract DateTime WhenToHandleNext { get; }
+        public abstract DateTime WhenToHandleNextUtc { get; }
         public EnqueableState State { get; protected set; } = EnqueableState.Pending;
         public abstract string ReplyTo { get; set; }
         public bool DeletedFromQueue { get; set; } = false;

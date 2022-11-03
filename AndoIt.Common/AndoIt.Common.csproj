@@ -107,6 +107,7 @@
     <Compile Include="Common\LogConsoleWrapper.cs" />
     <Compile Include="Common\RandomExtension.cs" />
     <Compile Include="Common\SmtpMailSender.cs" />
+    <Compile Include="Common\StringExtender.cs" />
     <Compile Include="Common\UserImpersonator.cs" />
     <Compile Include="Infrastructure\AppStateDao.cs" />
     <Compile Include="Infrastructure\Enqueuer.cs" />
@@ -137,8 +138,6 @@
     <Compile Include="Common\EnumAdapter.cs" />
     <Compile Include="Common\GoodConfigOnFiles.cs" />
     <Compile Include="Interface\IGoodConfig.cs" />
-    <Compile Include="Dto\StreamService.cs" />
-    <Compile Include="Dto\StringExtender.cs" />
     <Compile Include="Common\HttpClientAdapter.cs" />
     <Compile Include="Dto\Envelope.cs" />
     <Compile Include="Interface\IComunicate.cs" />

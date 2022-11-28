@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Common\_Test unitarios siempre.leeme" />
+    <Compile Include="Common\GoodConfigOnResapiTest.cs" />
     <Compile Include="Common\EnqueuerTest.cs" />
     <Compile Include="Common\EncrypterTest.cs" />
     <Compile Include="Common\GenericExtensionsTest.cs" />

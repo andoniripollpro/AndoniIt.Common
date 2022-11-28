@@ -87,7 +87,14 @@ namespace AndoIt.Common
 			if ((this.secondsToRefreshConfig != 0 && DateTime.Now >= this.dataBaseLastRead.AddSeconds(this.secondsToRefreshConfig))
 				|| (this.secondsToRefreshConfig == 0 && DateTime.Now >= this.dataBaseLastRead.AddHours(1)))
 			{
-				ReloadConfig();
+				try
+				{
+					ReloadConfig();
+				}
+				catch (Exception ex)
+				{
+					this.log.Error($"No se ha podido cargar la configuración. Seguirá con la vieja", ex);
+				}
 			}
 			return this.configurationInJson;
 		}

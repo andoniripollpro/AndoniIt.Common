@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AndoIt.Common.Interface;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace AndoIt.Common
 {
-    public class HttpClientAdapter
+    public class HttpClientAdapter : IHttpClientAdapter
     {
         public delegate void Log(string message);
 
@@ -29,12 +30,14 @@ namespace AndoIt.Common
         //    this.authenticationHeaderValue = authenticationHeaderValue;
         //}
 
-        public ILog LogListener { 
-            get => this.logListener; 
-            set { this.logListener = value; } 
+        public ILog LogListener
+        {
+            get => this.logListener;
+            set { this.logListener = value; }
         }
-        public int? TimeoutSeconds {
-            get => this.timeoutSeconds; 
+        public int? TimeoutSeconds
+        {
+            get => this.timeoutSeconds;
             set { this.timeoutSeconds = value; }
         }
         public AuthenticationHeaderValue AuthenticationHeaderValue

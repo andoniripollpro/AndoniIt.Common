@@ -26,7 +26,7 @@ namespace AndoIt.Common
             // OJO: No he hecho el test unitario
             string onProcess = extended.SubStringTruncated(startIndex);
             int resultLength = (endWord == null || !onProcess.Contains(endWord))
-                ? int.MaxValue : extended.IndexOf(endWord);
+                ? int.MaxValue : onProcess.IndexOf(endWord);
             return onProcess.SubStringTruncated(0, resultLength);
         }
 

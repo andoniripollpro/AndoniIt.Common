@@ -22,17 +22,20 @@ namespace AndoIt.Common
 		private object toLock = new object();
 
 		public GoodConfigOnResapi(IIoCObjectContainer ioCObjectContainer, string url, int secondsToRefreshConfig = 0, IHttpClientAdapter httpClient = null)
-		{
+		{	
 			this.ioCObjectContainer = ioCObjectContainer ?? throw new ArgumentNullException("ioCObjectContainer");
-			if (string.IsNullOrWhiteSpace(url))
-				throw new ArgumentNullException("url");
+			this.log = this.ioCObjectContainer.Get<ILog>();
+			this.log.Info("Start", new StackTrace());
 			this.httpClient = httpClient ?? new HttpClientAdapter();
+			if (string.IsNullOrWhiteSpace(url))
+				throw new ArgumentNullException("url");			
 			this.url = url;			
 			this.secondsToRefreshConfig = secondsToRefreshConfig;
-			this.log = this.ioCObjectContainer.Get<ILog>();
+			this.log.Info($"secondsToRefreshConfig={secondsToRefreshConfig}");			
 			this.configurationInJson = new Insister(this.log).Insist<string>(() => GetRootJStringFromRestApi() , 2);
 			this.dataBaseLastRead = DateTime.Now;
 			this.WriteConfigSafeToLog();
+			this.log.Info("End", new StackTrace());
 		}
 
 		public ILog Log => log;

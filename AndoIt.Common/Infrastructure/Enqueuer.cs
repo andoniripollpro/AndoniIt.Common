@@ -1,4 +1,5 @@
 ﻿using AndoIt.Common.Interface;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -73,11 +74,11 @@ namespace AndoIt.Common.Infrastructure
 				var toDelete = this.queue.Where(x => x.Id == toPocess.Id).FirstOrDefault();
 				if (toDelete != null)
 				{
-					this.queue.Remove(toPocess);
-					toDelete.DeletedFromQueue = true;
-					this.log.Info($"Task '{toPocess.Id}' eliminado de la cola.");
-					this.client.Persist(toDelete);
+					this.queue.Remove(toPocess);					
+					this.log.Info($"Task '{toPocess.Id}' eliminado de la cola.");					
 				}
+				toPocess.DeletedFromQueue = true;
+				this.client.Persist(toPocess);
 			}			
 			this.log.Debug("End", new StackTrace());
 		}
@@ -213,6 +214,7 @@ namespace AndoIt.Common.Infrastructure
 			{
 				this.client.Persist(enqueable);
 				this.log.Info($"Petición {enqueable.Id} Handled");
+				this.log.Debug($"Queue: {JsonConvert.SerializeObject(this.queue)} ");
 			}
 		}
 

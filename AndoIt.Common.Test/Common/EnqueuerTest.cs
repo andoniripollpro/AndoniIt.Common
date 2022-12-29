@@ -12,17 +12,17 @@ namespace AndoIt.Publicador.Common.Test.Unit
 	public class EnqueuerTest
     {
 		[TestMethod]
-		public void InsertTask_DueOnPast_Haldeled()
+		public void InsertTask_DueOnPast_HaldeledAndQueuedAgain()
         {
 			//  Arrange
 			var helper = new TestsHelper();			
 			IEnqueuer toTest = new Enqueuer(helper.MockLog.Object, helper.MockEnquerClient.Object);
 			var mockEnqueable = helper.MockEnqueable;
-			mockEnqueable.Setup(x => x.WhenToHandleNextUtc).Returns(DateTime.Now.AddSeconds(-1));
+			mockEnqueable.Setup(x => x.WhenToHandleNextUtc).Returns(DateTime.Now.ToUniversalTime().AddSeconds(-1));
+			mockEnqueable.Setup(x => x.State).Returns(IEnqueable.EnqueableState.Pending);
 
 			//  Act
 			toTest.InsertTask(this, mockEnqueable.Object);
-		
 
 			//	Assert
 			mockEnqueable.Verify(x => x.Handle(), Times.Once);
@@ -36,7 +36,7 @@ namespace AndoIt.Publicador.Common.Test.Unit
 			var helper = new TestsHelper();
 			IEnqueuer toTest = new Enqueuer(helper.MockLog.Object, helper.MockEnquerClient.Object);
 			var mockEnqueable = helper.MockEnqueable;
-			mockEnqueable.Setup(x => x.WhenToHandleNextUtc).Returns(DateTime.Now.AddSeconds(2));
+			mockEnqueable.Setup(x => x.WhenToHandleNextUtc).Returns(DateTime.Now.ToUniversalTime().AddSeconds(2));
 
 			//  Act
 			toTest.InsertTask(this, mockEnqueable.Object);
@@ -53,7 +53,7 @@ namespace AndoIt.Publicador.Common.Test.Unit
 			var helper = new TestsHelper();
 			IEnqueuer toTest = new Enqueuer(helper.MockLog.Object, helper.MockEnquerClient.Object);
 			var mockEnqueable = helper.MockEnqueable;
-			mockEnqueable.Setup(x => x.WhenToHandleNextUtc).Returns(DateTime.Now.AddSeconds(2));
+			mockEnqueable.Setup(x => x.WhenToHandleNextUtc).Returns(DateTime.Now.ToUniversalTime().AddSeconds(2));
 
 			//  Act
 			toTest.InsertTask(this, mockEnqueable.Object);
@@ -64,5 +64,42 @@ namespace AndoIt.Publicador.Common.Test.Unit
 			Assert.AreEqual(1, toTest.Queue.Count); 
 			//Assert.AreEqual(IEnqueable.EnqueableState.HandledOk, toTest.Queue[0].State); 
 		}
+		
+		[TestMethod]
+		public void InsertTask_DueOnPastHandledOk_NotEnqueued()
+		{
+			//  Arrange
+			var helper = new TestsHelper();
+			IEnqueuer toTest = new Enqueuer(helper.MockLog.Object, helper.MockEnquerClient.Object);
+			var mockEnqueable = helper.MockEnqueable;
+			mockEnqueable.Setup(x => x.WhenToHandleNextUtc).Returns(DateTime.Now.ToUniversalTime().AddSeconds(-1));
+			mockEnqueable.Setup(x => x.State).Returns(IEnqueable.EnqueableState.HandledOk);
+
+			//  Act
+			toTest.InsertTask(this, mockEnqueable.Object);
+
+			//	Assert
+			mockEnqueable.Verify(x => x.Handle(), Times.Never);
+			Assert.AreEqual(0, toTest.Queue.Count);
+		}
+
+		[TestMethod]
+		public void InsertTask_DueOnPastErrorState_NotEnqueued()
+		{
+			//  Arrange
+			var helper = new TestsHelper();
+			IEnqueuer toTest = new Enqueuer(helper.MockLog.Object, helper.MockEnquerClient.Object);
+			var mockEnqueable = helper.MockEnqueable;
+			mockEnqueable.Setup(x => x.WhenToHandleNextUtc).Returns(DateTime.Now.ToUniversalTime().AddSeconds(-1));
+			mockEnqueable.Setup(x => x.State).Returns(IEnqueable.EnqueableState.Error);
+
+			//  Act
+			toTest.InsertTask(this, mockEnqueable.Object);
+
+			//	Assert
+			mockEnqueable.Verify(x => x.Handle(), Times.Never);
+			Assert.AreEqual(0, toTest.Queue.Count);
+		}
+
 	}
 }

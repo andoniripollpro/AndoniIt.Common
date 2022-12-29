@@ -44,6 +44,9 @@ namespace AndoIt.Common.Test.Common
             helper.MockHttpClientAdapter.Verify(x => x.AllCookedUpGet(It.IsAny<string>(), null), Times.Exactly(3)); // La 1 al construir el objeto y la excepción lo intenta 2 veces porque así está hardcodeado
         }
 
+        /// <summary>
+        /// Si se ejecuta junto con los demás los tiempos igual no encajan. Igual hay que ejecutarlo aparte
+        /// </summary>
         [TestMethod]
         public void GetAsString_HttpClientAdapterSlow_LoadOldValue()
         {

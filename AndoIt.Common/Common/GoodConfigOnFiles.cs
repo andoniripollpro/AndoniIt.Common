@@ -121,7 +121,7 @@ namespace AndoIt.Common
 			throw new NotImplementedException();
 		}
 
-		public override void ReloadConfig()
+		public override void ReloadConfigIfNeeded()
 		{
 			//	No hay necesidad de hacer esto: Cada vez que lee un valor vuelve a leer el fichero
 		}

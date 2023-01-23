@@ -15,7 +15,7 @@ namespace AndoIt.Common.Common
         public abstract void AddUpdateFromJToken(JToken configuration);
         public abstract JToken GetJNodeByTagAddress(string tagAddress = null);
         public abstract XmlNode GetXmlNodeByTagAddress(string tagAddress);
-        public abstract void ReloadConfig();
+        public abstract void ReloadConfigIfNeeded();
         
         public int GetAsInt(string tagAddress)
         {            

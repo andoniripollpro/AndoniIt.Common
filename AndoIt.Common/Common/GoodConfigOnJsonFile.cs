@@ -36,7 +36,7 @@ namespace AndoIt.Common
 		{
 			this.connecData = connectData;
 			this.configFileName = configFileName;
-			ReloadConfig();
+			ReloadConfigIfNeeded();
 		}
 
 		public override string ConnectionString => throw new NotImplementedException("ConnectionString en GoodConfigOnFiles no se usa");
@@ -76,7 +76,7 @@ namespace AndoIt.Common
 			throw new NotImplementedException();
 		}
 
-		public override void ReloadConfig()
+		public override void ReloadConfigIfNeeded()
 		{
 			this.configurationInJson = File.ReadAllText(this.configFileName);
 		}

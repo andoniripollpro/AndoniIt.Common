@@ -89,7 +89,7 @@ namespace AndoIt.Common
 			{
 				try
 				{
-					ReloadConfig();
+					ReloadConfigIfNeeded();
 				}
 				catch (Exception ex)
 				{
@@ -99,7 +99,7 @@ namespace AndoIt.Common
 			return this.configurationInJson;
 		}
 
-		public override void ReloadConfig()
+		public override void ReloadConfigIfNeeded()
 		{
 			this.configurationInJson = new Insister(this.log).Insist<string>(() => GetRootJStringFromDB(), 2);
 			this.dataBaseLastRead = DateTime.Now;

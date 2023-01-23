@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using AndoIt.Common.Common;
@@ -15,11 +16,12 @@ namespace AndoIt.Common
 		private readonly IIoCObjectContainer ioCObjectContainer;
 		private readonly ILog log;
 		private readonly string url;
-		private readonly int secondsToRefreshConfig;
+		private int secondsToRefreshConfig;
 		private IHttpClientAdapter httpClient;
 		private string configurationInJson;
 		private DateTime dataBaseLastRead;
-		private object toLock = new object();
+		private object reloadLock = new object();
+		private object dataLock = new object();
 
 		public GoodConfigOnResapi(IIoCObjectContainer ioCObjectContainer, string url, int secondsToRefreshConfig = 0, IHttpClientAdapter httpClient = null)
 		{	
@@ -40,13 +42,22 @@ namespace AndoIt.Common
 
 		public ILog Log => log;
 
+		public int SecondsToRefreshConfig 
+		{ 
+			set
+			{
+				lock (this.dataLock)
+					this.secondsToRefreshConfig = value;
+			}		
+		}
+
 		public override string ConnectionString => throw new NotImplementedException("Esta configuración no usa ConnectionString");
 
 		private bool NeedsToReload
 		{
 			get
 			{
-				lock (this.toLock)
+				lock (this.dataLock)
 				{
 					return (this.secondsToRefreshConfig != 0 && DateTime.Now >= this.dataBaseLastRead.AddSeconds(this.secondsToRefreshConfig))
 									|| (this.secondsToRefreshConfig == 0 && DateTime.Now >= this.dataBaseLastRead.AddHours(1));
@@ -97,38 +108,44 @@ namespace AndoIt.Common
 		private string GetRootJString()
         {
             //	Refresh config each this.secondsToRefreshConfig OR each hour by default 
-            if (NeedsToReload)
-            {
-                ReloadConfig();
-            }
-
-            lock (this.toLock)
+            ReloadConfigIfNeeded();
+            
+            lock (this.dataLock)
             {
                 return this.configurationInJson;
             }
         }
 
-        public override void ReloadConfig()
+        public override void ReloadConfigIfNeeded()
 		{
 			this.log.Info("Start", new StackTrace());
-			Task.Factory.StartNew(() =>
-			{
-				this.log.Info("ReloadConfig.Action: Start. Antes de leer la config", new StackTrace());
-				lock (this.toLock)
+			Task.Run(() =>
+			{	
+				lock (this.reloadLock)
 				{
+					if (!NeedsToReload)
+						return;
+
 					try
 					{
-						this.configurationInJson = new Insister(this.log).Insist<string>(() => GetRootJStringFromRestApi(), 2);
-						this.dataBaseLastRead = DateTime.Now;
-						this.WriteConfigSafeToLog();
+						this.log.Info("ReloadConfig.Action: Start. Antes de leer la config", new StackTrace());
+						var configurationInJson = new Insister(this.log).Insist<string>(() => GetRootJStringFromRestApi(), 2);
+						lock (this.dataLock)
+						{
+							this.configurationInJson = configurationInJson;
+							this.dataBaseLastRead = DateTime.Now;
+						}						
 					}
 					catch (Exception ex)
 					{
 						this.log.Error($"No se ha podido cargar la configuración. Seguirá con la vieja", ex);
+						return;
 					}
 				}
+				this.WriteConfigSafeToLog();
 				this.log.Info("ReloadConfig.Action: End. Después de leer la config", new StackTrace());
-			});			
+			});
+			Thread.Sleep(1);
 			this.log.Info("End", new StackTrace());
 		}
 

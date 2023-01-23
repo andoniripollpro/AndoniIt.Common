@@ -23,7 +23,9 @@ namespace AndoIt.Common.Common
 			{
 				try
 				{
+					this.log?.Debug($"Insister. Before Insist number {tryNumber}/{retrayes}. Func={func.Target.GetType().Name}.{func.Method.Name}. Retry={tryNumber}");
 					T result = func.Invoke();
+					this.log?.Debug($"Insister. After Insist number {tryNumber}/{retrayes}. Func={func.Target.GetType().Name}.{func.Method.Name}. Retry={tryNumber}");
 					exception = null;
 					return result;
 				}

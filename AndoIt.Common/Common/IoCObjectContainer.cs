@@ -6,13 +6,20 @@ namespace AndoIt.Common.Common
 	public static class IoCObjectContainer
 	{
 		private static IIoCObjectContainer singleton = null;
+		private static object theLock = new object();
 		
 		public static IIoCObjectContainer Singleton {
 			get {
-				return IoCObjectContainer.singleton ?? throw new ConfigurationErrorsException("IoCObjectContainer.Singleton sin asignar. Es necesario inicializarlo IoCObjectContainer.Singleton = tuIoCContainer");
+				lock (IoCObjectContainer.theLock)
+				{
+					return IoCObjectContainer.singleton ?? throw new ConfigurationErrorsException("IoCObjectContainer.Singleton sin asignar. Es necesario inicializarlo IoCObjectContainer.Singleton = tuIoCContainer");
+				}
 			}
 			set {
-				IoCObjectContainer.singleton = value;
+				lock (IoCObjectContainer.theLock)
+				{
+					IoCObjectContainer.singleton = value;
+				}
 			}
 		}
 	}

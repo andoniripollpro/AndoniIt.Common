@@ -144,8 +144,7 @@ namespace AndoIt.Common
 				}
 				this.WriteConfigSafeToLog();
 				this.log.Info("ReloadConfig.Action: End. Después de leer la config", new StackTrace());
-			});
-			Thread.Sleep(1);
+			});			
 			this.log.Info("End", new StackTrace());
 		}
 

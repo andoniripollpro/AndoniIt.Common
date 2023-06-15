@@ -1,6 +1,7 @@
 ﻿using AndoIt.Common.Interface;
 using System;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace AndoIt.Common
 {
@@ -46,12 +47,22 @@ namespace AndoIt.Common
 		{
 			return string.Empty;
 		}
-		public void Debug(string message, StackTrace stackTrace = null)
+		public void Debug(string message, StackTrace stackTrace = null, params object[] paramValues)
 		{
 			if (this.logLevel <= LogLevel.Debug)
+			{
 				Console.WriteLine($"Debug: {message}");
+				if (paramValues != null && paramValues.Length > 0)
+					Console.WriteLine($"    Params: {ParamsToString(stackTrace.GetFrame(0).GetMethod(), paramValues)}");
+			}
 		}
-		public void Dispose()
+
+        private object ParamsToString(MethodBase methodBase, object[] paramValues)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
 		{
 		}
 

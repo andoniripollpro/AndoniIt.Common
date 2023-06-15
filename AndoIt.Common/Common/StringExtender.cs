@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Web;
 
 namespace AndoIt.Common
@@ -54,13 +55,13 @@ namespace AndoIt.Common
             return new string(phrase.ToArray());
         }
 
-        public static string TextToJsonValidValue ( this string extended)
+        public static string TextToJsonValidValue (this string extended)
         {
             var result = HttpUtility.JavaScriptStringEncode(extended);
             return result;
             //return extended.Replace("\"", "''");
         }
-
+    
         public static Stream GenerateStream(this string s)
         {
             var stream = new MemoryStream();

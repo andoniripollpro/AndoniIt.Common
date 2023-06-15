@@ -337,6 +337,7 @@ namespace AndoIt.Common
             if (!responseMessage.IsSuccessStatusCode)
                 throw new Exception(ResponseToString(responseMessage));
             response = responseMessage.Content.ReadAsStringAsync().Result;
+            this.LogListener?.Message($"Resultado GET {url}:{Environment.NewLine}'{response}' ");
 
             return response;
         }

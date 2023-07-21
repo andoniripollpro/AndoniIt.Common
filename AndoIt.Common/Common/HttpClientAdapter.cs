@@ -344,7 +344,7 @@ namespace AndoIt.Common
 
         private static string ResponseToString(HttpResponseMessage responseMessage)
         {
-            return $"ReasonPhrase = '{responseMessage.ReasonPhrase.ToString()}'. StatusCode={(int)responseMessage.StatusCode}. Headers = '{responseMessage.Headers}'. Content = '{JsonConvert.SerializeObject(responseMessage.Content)}'";
+            return $"ReasonPhrase = '{responseMessage.ReasonPhrase.ToString()}'. StatusCode={(int)responseMessage.StatusCode}. Headers = '{responseMessage.Headers}'. Content = '{JsonConvert.SerializeObject(responseMessage.Content)}'."; 
         }
 
         public T AllCookedUpGet<T>(string url, NetworkCredential credentials = null)

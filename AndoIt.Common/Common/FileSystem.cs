@@ -30,6 +30,14 @@ namespace AndoIt.Common
             return lastDatetimeModified;
         }
 
+        public string GetLeefDirectoryName(string path)
+        {
+            string pathWithoutFile = Path.GetDirectoryName(path);
+            pathWithoutFile = pathWithoutFile.Replace("\\", "/");
+            string result = pathWithoutFile.SubStringTruncated(0, pathWithoutFile.LastIndexOf('/'));
+            return result;
+        }
+
         public static void WriteAllTextSafe(string fileCompletePath, string fileContent)
         {
             if (!Directory.Exists(Path.GetDirectoryName(fileCompletePath))) 

@@ -22,15 +22,14 @@ namespace AndoIt.Common.Common
 			{
 				//type: ExchangeType.Direct
 				channel.ExchangeDeclare(exchange: exchangeQueueLinkName,
-					type: ExchangeType.Direct,
+					type: ExchangeType.Fanout,
 					durable: true,
 					autoDelete: false,
 					arguments: null);
 			}
 			catch (Exception ex)
 			{
-				this.log.Warn($"Al crear el exchange homonima al queue: '{exchangeQueueLinkName}'", ex);
-				return;
+				this.log.Warn($"Al crear el exchange homonima al queue: '{exchangeQueueLinkName}'", ex);				
 			}
 			//Queue
 			try
@@ -43,8 +42,7 @@ namespace AndoIt.Common.Common
 			}
 			catch (Exception ex)
 			{
-				this.log.Warn($"Al crear una queue homonima al exchange: '{exchangeQueueLinkName}'", ex);
-				return;
+				this.log.Warn($"Al crear una queue homonima al exchange: '{exchangeQueueLinkName}'", ex);				
 			}
 			//Exchange-Queue Link
 			try

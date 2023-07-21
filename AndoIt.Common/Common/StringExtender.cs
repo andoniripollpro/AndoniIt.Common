@@ -72,5 +72,15 @@ namespace AndoIt.Common
             return stream;
         }
 
+        public static string SubStringTruncatedFromMiddle(this string extended, int maxLength)
+        {
+            int lengthBefore = extended.Length;
+            if (maxLength >= lengthBefore)
+                return extended;
+            int lengthBegining = (int)Math.Ceiling((double)maxLength / 2);
+            int lengthEnd = (int)Math.Floor((double)maxLength / 2);
+            extended = extended.Substring(0, lengthBegining) + extended.Substring(lengthBefore - lengthEnd, lengthEnd);
+            return extended;
+        }
     }
 }

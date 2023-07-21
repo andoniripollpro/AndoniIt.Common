@@ -70,7 +70,7 @@ namespace AndoIt.Common.Common
 
 					byte[] payload = Encoding.UTF8.GetBytes(datosPublicacion);
 					channel.BasicPublish(this.ExchangeName, routingKey, properties, payload);
-					this.log.Debug($"channel.BasicPublish({this.ExchangeName}, {routingKey}, {properties}, {payload})", new StackTrace());
+					this.log.Debug($"channel.BasicPublish(exchange:{this.ExchangeName}, routingKey:{routingKey}, basicProperties:{Newtonsoft.Json.JsonConvert.SerializeObject(properties)}, body:{datosPublicacion})", new StackTrace());
 				}
 			}
 		}

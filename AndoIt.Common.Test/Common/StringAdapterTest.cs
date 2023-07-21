@@ -101,6 +101,61 @@ namespace AndoIt.Common.Test.Common.Unit
 		}
 		#endregion
 
+		#region SubStringTruncatedFromMiddle
+		[TestMethod]
+		public void SubStringTruncatedFromMiddle_Pair_OneHalfForeachSide()
+		{
+			//	Arrange			
+			string toTest = "ABC";
+			int maxLenth = 2;
+
+			//	Act
+			string actual = toTest.SubStringTruncatedFromMiddle(maxLenth);
+
+			//	Assert
+			Assert.AreEqual("AC", actual);
+		}
+		[TestMethod]
+		public void SubStringTruncatedFromMiddle_Odd_FirstSideBiggerThanSecond()
+		{
+			//	Arrange			
+			string toTest = "ABCDE";
+			int maxLenth = 3;
+
+			//	Act
+			string actual = toTest.SubStringTruncatedFromMiddle(maxLenth);
+
+			//	Assert
+			Assert.AreEqual("ABE", actual);
+		}
+		[TestMethod]
+		public void SubStringTruncatedFromMiddle_Equal_NoChanges()
+		{
+			//	Arrange			
+			string toTest = "ABCDE";
+			int maxLenth = 5;
+
+			//	Act
+			string actual = toTest.SubStringTruncatedFromMiddle(maxLenth);
+
+			//	Assert
+			Assert.AreEqual("ABCDE", actual);
+		}
+		[TestMethod]
+		public void SubStringTruncatedFromMiddle_Bigger_NoChanges()
+		{
+			//	Arrange			
+			string toTest = "ABCDE";
+			int maxLenth = 6;
+
+			//	Act
+			string actual = toTest.SubStringTruncatedFromMiddle(maxLenth);
+
+			//	Assert
+			Assert.AreEqual("ABCDE", actual);
+		}
+		#endregion
+
 		#region Words
 		[TestMethod]
 		public void SubStringTruncated_CutsFromStartWord_RestOfStringOk()

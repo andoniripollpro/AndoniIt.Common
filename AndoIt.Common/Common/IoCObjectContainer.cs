@@ -6,7 +6,7 @@ namespace AndoIt.Common.Common
 	public static class IoCObjectContainer
 	{
 		private static IIoCObjectContainer singleton = null;
-		private static object theLock = new object();
+		private static readonly object theLock = new object();
 		
 		public static IIoCObjectContainer Singleton {
 			get {

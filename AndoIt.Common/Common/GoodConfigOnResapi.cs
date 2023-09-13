@@ -20,8 +20,8 @@ namespace AndoIt.Common
 		private IHttpClientAdapter httpClient;
 		private string configurationInJson;
 		private DateTime dataBaseLastRead;
-		private object reloadLock = new object();
-		private object dataLock = new object();
+		private readonly object reloadLock = new object();
+		private readonly object dataLock = new object();
 
 		public GoodConfigOnResapi(IIoCObjectContainer ioCObjectContainer, string url, int secondsToRefreshConfig = 0, IHttpClientAdapter httpClient = null)
 		{	

@@ -18,7 +18,7 @@ namespace AndoIt.Common.Infrastructure
 		private readonly IEnqueuerClient client;
 		private readonly Timer timer;
 		private readonly List<IEnqueable> queue;
-		private object toLock = new object();
+		private readonly object toLock = new object();
 
 		public bool Continue { get; set; } = false;
 		int IEnqueuer.ConfigTimingSecondsMaxTimerLapse { get; set; } = 600000; //Default cada 10 min

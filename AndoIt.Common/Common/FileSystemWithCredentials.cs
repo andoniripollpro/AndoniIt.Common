@@ -14,6 +14,12 @@ namespace AndoIt.Common
                 return File.Exists(fileAddress);
         }
 
+        public void DirectoryDelete(string toDelete, NetworkCredential credentials)
+        {
+            using (new NetworkConnection(Path.GetDirectoryName(toDelete), credentials))
+                Directory.Delete(toDelete, true);
+        }
+
         private class NetworkConnection : IDisposable
         {
             string networkName;

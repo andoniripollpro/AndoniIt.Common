@@ -99,7 +99,7 @@ namespace AndoIt.Common.Common
 					ReplyTo = ea.BasicProperties.ReplyTo
 				});
 
-				this.channel.BasicAck(ea.DeliveryTag, false);
+				this.channel.BasicAck(ea.DeliveryTag, multiple: false);
 
 				this.log.InfoSafe($"Received message '{message}', correlationId {correlationId}. Rabbit queue: {this.amqpUrlListen}", new StackTrace());
 			}

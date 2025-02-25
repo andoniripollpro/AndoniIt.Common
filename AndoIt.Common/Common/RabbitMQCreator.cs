@@ -34,12 +34,12 @@ namespace AndoIt.Common.Common
                 this.log.Warn($"Al crear el exchange homónimo al queue: '{exchangeQueueLinkName}'", ex);
             }
 
-            // Queue en modo Quorum
+            // Queue en modo Quorum 
             try
             {
                 var queueArguments = new Dictionary<string, object>
                 {
-                    { "x-queue-type", "quorum" } // 🚀 Configuración clave para que la cola sea de tipo Quorum
+                    { "x-queue-type", "quorum" } // 🚀 Configuración para que la cola sea de tipo Quorum
                 };
 
                 channel.QueueDeclare(

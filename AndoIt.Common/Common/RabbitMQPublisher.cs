@@ -65,7 +65,8 @@ namespace AndoIt.Common.Common
 					properties.ContentEncoding = "UTF-8";
 					properties.DeliveryMode = 2;
 					properties.ReplyTo = confirmationQueue;
-					if (correlationId != string.Empty)
+                    properties.Persistent = true; // 👈 Mensajes persistentes
+                    if (correlationId != string.Empty)
 						properties.CorrelationId = correlationId;
 
 					byte[] payload = Encoding.UTF8.GetBytes(datosPublicacion);

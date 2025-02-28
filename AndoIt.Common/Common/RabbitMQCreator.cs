@@ -1,8 +1,11 @@
 ﻿using AndoIt.Common.Interface;
 using RabbitMQ.Client;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security.Policy;
+using System.Web;
 
 namespace AndoIt.Common.Common
 {
@@ -15,10 +18,11 @@ namespace AndoIt.Common.Common
 			this.log = log ?? throw new ArgumentNullException(nameof(log));
 		}
 
-        public void CreateExchangeQueueAndLinkIfPossible(string exchangeQueueLinkName, IModel channel, string routingKey)
+        public void CreateExchangeQueueAndLinkIfPossible(string exchangeQueueLinkName, IModel channel
+            , string routingKey = "", Dictionary<string, object> queueArguments = null)
         {
             this.log.Debug($"Start", new StackTrace(), exchangeQueueLinkName, channel, routingKey);
-
+            
             // Exchange
             try
             {
@@ -37,11 +41,6 @@ namespace AndoIt.Common.Common
             // Queue en modo Quorum 
             try
             {
-                var queueArguments = new Dictionary<string, object>
-                {
-                    { "x-queue-type", "quorum" } // 🚀 Configuración para que la cola sea de tipo Quorum
-                };
-
                 channel.QueueDeclare(
                     queue: exchangeQueueLinkName,
                     durable: true,

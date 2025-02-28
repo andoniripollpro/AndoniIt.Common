@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
@@ -18,9 +19,8 @@ namespace AndoIt.Common.Common
 
 		private readonly ILog log;
 		private readonly ConnectionFactory connectionFactory;
-
 		private readonly string amqpUrlListen;
-		private bool DisposingOnPurpouse = false;
+        private bool DisposingOnPurpouse = false;
 		private IConnection connection;
 		private IModel channel;
 
@@ -35,7 +35,7 @@ namespace AndoIt.Common.Common
 			this.connectionFactory.RequestedConnectionTimeout = int.MaxValue;
 			this.log.Info("this.connectionFactory.AutomaticRecoveryEnabled = true", new StackTrace());
 			this.amqpUrlListen = amqpUrlListen ?? throw new ArgumentNullException("amqpUrlListen");
-		}
+        }
 
 		public int InternalRestartRetrays { get; set; } = 10;
 		public int RetryEachSeconds { get; set; } = 900; // 15 min
@@ -46,7 +46,7 @@ namespace AndoIt.Common.Common
 			this.log.InfoSafe($"Start on completeUri '{this.amqpUrlListen}'", new StackTrace());
 
 			try
-			{				
+			{
 				Uri uri = new Uri(this.amqpUrlListen);
 				this.connectionFactory.Uri = uri;
 				string queueName = HttpUtility.ParseQueryString(uri.Query).Get("queue");
@@ -59,11 +59,16 @@ namespace AndoIt.Common.Common
 				this.channel = this.connection.CreateModel();
 				this.channel.ModelShutdown += (obj, msg) => ModelShutdown(obj, msg);
 
-				//Crea Exchanges, Queues y Links se es necesario
-				if (!this.connectionFactory.Uri.ToString().Contains("autoCreation=false"))
+                //Crea Exchanges, Queues y Links se es necesario
+                if (!this.connectionFactory.Uri.ToString().Contains("autoCreation=false"))
 				{
-					var rabbitMqCreator = new RabbitMQCreator(this.log);
-					rabbitMqCreator.CreateExchangeQueueAndLinkIfPossible(queueName, channel, string.Empty);
+                    this.log.Info($"Llama a CreateExchangeQueueAndLinkIfPossible", new StackTrace());
+                    Dictionary<string, object> queueArguments = new Dictionary<string, object>();
+                    if (HttpUtility.ParseQueryString(uri.Query).Get("quorum") == "true")
+                        queueArguments.Add("x-queue-type", "quorum");
+
+                    var rabbitMqCreator = new RabbitMQCreator(this.log);
+					rabbitMqCreator.CreateExchangeQueueAndLinkIfPossible(queueName, channel, queueArguments: queueArguments);
 				}
 
 				var consumer = new EventingBasicConsumer(this.channel);
@@ -194,7 +199,8 @@ namespace AndoIt.Common.Common
 		/// </summary>
 		private void RecoverIfNeeded()
 		{
-			try
+            this.log.Info($"Start", new StackTrace());
+            try
 			{
 				if (!this.DisposingOnPurpouse && this.channel != null)
 				{

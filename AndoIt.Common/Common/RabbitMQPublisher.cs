@@ -1,7 +1,9 @@
 ﻿using AndoIt.Common.Interface;
 using RabbitMQ.Client;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security.Policy;
 using System.Text;
 using System.Web;
 
@@ -14,7 +16,8 @@ namespace AndoIt.Common.Common
 
 		public RabbitMQPublisher(ILog log, string amqpUrlPublish)
 		{
-			this.log = log ?? throw new ArgumentNullException("log");
+            this.log.InfoSafe($"Start on amqpUrlPublish '{amqpUrlPublish}'", new StackTrace());
+            this.log = log ?? throw new ArgumentNullException("log");
 			this.connectionFactory = new ConnectionFactory();
 			this.connectionFactory.Uri = new Uri(amqpUrlPublish ?? throw new ArgumentNullException("amqpUrlPublish"));
 
@@ -25,8 +28,11 @@ namespace AndoIt.Common.Common
 					using (IModel channel = connection.CreateModel())
 					{
 						this.log.Info($"Llama a CreateExchangeQueueAndLinkIfPossible", new StackTrace());
-						var rabbitMqCreator = new RabbitMQCreator(this.log);
-						rabbitMqCreator.CreateExchangeQueueAndLinkIfPossible(this.ExchangeName, channel, string.Empty);
+                        Dictionary<string, object> queueArguments = new Dictionary<string, object>();
+                        if (HttpUtility.ParseQueryString(new Uri(amqpUrlPublish).Query).Get("quorum") == "true")
+                            queueArguments.Add("x-queue-type", "quorum");
+                        var rabbitMqCreator = new RabbitMQCreator(this.log);
+						rabbitMqCreator.CreateExchangeQueueAndLinkIfPossible(this.ExchangeName, channel, queueArguments: queueArguments);
 					}
 				}
 			}

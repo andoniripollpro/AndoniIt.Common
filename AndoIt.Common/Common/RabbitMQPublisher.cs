@@ -16,9 +16,9 @@ namespace AndoIt.Common.Common
 
 		public RabbitMQPublisher(ILog log, string amqpUrlPublish)
 		{
-            this.log.InfoSafe($"Start on amqpUrlPublish '{amqpUrlPublish}'", new StackTrace());
             this.log = log ?? throw new ArgumentNullException("log");
-			this.connectionFactory = new ConnectionFactory();
+            this.log.InfoSafe($"Start on amqpUrlPublish '{amqpUrlPublish}'", new StackTrace());
+            this.connectionFactory = new ConnectionFactory();
 			this.connectionFactory.Uri = new Uri(amqpUrlPublish ?? throw new ArgumentNullException("amqpUrlPublish"));
 
 			if (!this.connectionFactory.Uri.ToString().Contains("autoCreation=false"))

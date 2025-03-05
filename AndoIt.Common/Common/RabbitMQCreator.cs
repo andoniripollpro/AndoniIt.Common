@@ -21,7 +21,7 @@ namespace AndoIt.Common.Common
         public void CreateExchangeQueueAndLinkIfPossible(string exchangeQueueLinkName, IModel channel
             , string routingKey = "", Dictionary<string, object> queueArguments = null)
         {
-            this.log.Debug($"Start", new StackTrace(), exchangeQueueLinkName, channel, routingKey);
+            this.log.Debug($"Start", new StackTrace(), exchangeQueueLinkName, channel, routingKey, queueArguments);
             
             // Exchange
             try
@@ -50,7 +50,7 @@ namespace AndoIt.Common.Common
             }
             catch (Exception ex)
             {
-                this.log.Warn($"Al crear una queue homónima al exchange en modo Quorum: '{exchangeQueueLinkName}'", ex);
+                this.log.Warn($"Al crear una queue homónima al exchange: '{exchangeQueueLinkName}'", ex);
             }
 
             // Vinculación Exchange-Queue

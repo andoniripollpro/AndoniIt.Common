@@ -63,9 +63,12 @@ namespace AndoIt.Common.Common
                 if (!this.connectionFactory.Uri.ToString().Contains("autoCreation=false"))
 				{
                     this.log.Info($"Llama a CreateExchangeQueueAndLinkIfPossible", new StackTrace());
-                    Dictionary<string, object> queueArguments = new Dictionary<string, object>();
-                    if (this.amqpUrlListen.Contains("quorum=true"))
+                    Dictionary<string, object> queueArguments = null;
+                    if (amqpUrlListen.Contains("quorum=true"))
+                    {
+                        queueArguments = new Dictionary<string, object>();
                         queueArguments.Add("x-queue-type", "quorum");
+                    }
 
                     var rabbitMqCreator = new RabbitMQCreator(this.log);
 					rabbitMqCreator.CreateExchangeQueueAndLinkIfPossible(queueName, channel, queueArguments: queueArguments);

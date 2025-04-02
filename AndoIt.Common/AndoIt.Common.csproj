@@ -23,7 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <IntermediateOutputPath>C:\Users\optiva\AppData\Local\Temp\vs2BC1.tmp\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\optiva\AppData\Local\Temp\vs14F3.tmp\Debug\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,7 +32,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <IntermediateOutputPath>C:\Users\optiva\AppData\Local\Temp\vs2BC1.tmp\Release\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\optiva\AppData\Local\Temp\vs14F3.tmp\Release\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Stage|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -42,7 +42,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <IntermediateOutputPath>C:\Users\optiva\AppData\Local\Temp\vs2BC1.tmp\Stage\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\optiva\AppData\Local\Temp\vs14F3.tmp\Stage\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
